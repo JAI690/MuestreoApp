@@ -80,8 +80,8 @@ const casos = {
                 return ((N*varianza)/n)*(N-n)
             }
         },
-        'promedio': ({suma,totalElementos}) => {
-            return (suma*totalElementos)
+        'promedio': ({promedio,N}) => {
+            return (promedio*N)
         },
         'size': ({cota,N,varianza}) => {
             const D = (cota*cota)/(4*(N*N));
@@ -129,7 +129,7 @@ const casos = {
 
         switch (queCalcular){
             case 'promedio': 
-                respuesta = promedios({type, suma: suma||promedio, totalElementos});
+                respuesta = promedios({type, suma,promedio, totalElementos,N});
                 break
             case 'varianza':
                 respuesta =  varianzaFormula({type,isKnown,varianza,N,n,p,q});
@@ -154,8 +154,8 @@ const casos = {
         return 2*Math.sqrt(varianzaCalculada)
     }
 
-    const promedios = function({type, suma, totalElementos}){
-        const respuesta = casos[type]['promedio']({suma,totalElementos});
+    const promedios = function({type, suma, totalElementos,N,promedio}){
+        const respuesta = casos[type]['promedio']({suma,totalElementos,N,promedio});
 
         return respuesta;
     }
