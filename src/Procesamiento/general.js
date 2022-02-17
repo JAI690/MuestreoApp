@@ -1,4 +1,4 @@
-const casos = {
+const casos2 = {
     'media':{
         'varianza':{
             'known': ({varianza,N,n}) => {
@@ -37,6 +37,61 @@ const casos = {
         'varianza':{
             'known': ({p,N,n}) => {
                 return ((p*(1-p))/n)*((N-n)/(N-1))
+            },
+            'unknown': ({p,q,N,n}) => {
+                return ((p*q)/n)*((N-n)/N)
+            }
+        },
+        'promedio': ({suma,totalElementos}) => {
+            return (suma/totalElementos)
+        },
+        'size': ({cota,N,p,q}) => {
+            const D = (cota^2)/4;
+                return (N*p*q)/(((N-1)*D) + (p*q))
+        }
+    }
+
+}
+
+const casos = {
+    'media':{
+        'varianza':{
+            'known': ({varianza}) => {
+                return varianza
+            },
+            'unknown': ({varianza,N,n}) => {
+                return (varianza/n)*((N-n)/(N))
+            }
+        },
+        'promedio': ({suma,totalElementos}) => {
+            return (suma/totalElementos)
+        },
+        'size': ({cota,N,varianza}) => {
+            const D = (cota^2)/4;
+                return (N*varianza)/(((N-1)*D) + varianza)
+        }
+    },
+    'total':{
+        'varianza':{
+            'known': ({varianza}) => {
+                return varianza
+            },
+            'unknown': ({varianza,N,n}) => {
+                return ((N*varianza)/n)*(N-n)
+            }
+        },
+        'promedio': ({suma,totalElementos}) => {
+            return (suma*totalElementos)
+        },
+        'size': ({cota,N,varianza}) => {
+            const D = (cota^2)/(4*(N^2));
+                return (N*varianza)/(((N-1)*D) + varianza)
+        }
+    },
+    'proporcion':{
+        'varianza':{
+            'known': ({varianza}) => {
+                return varianza
             },
             'unknown': ({p,q,N,n}) => {
                 return ((p*q)/n)*((N-n)/N)
