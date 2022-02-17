@@ -67,7 +67,7 @@ const casos = {
             return (suma/totalElementos)
         },
         'size': ({cota,N,varianza}) => {
-            const D = (cota^2)/4;
+            const D = (cota*cota)/4;
                 return (N*varianza)/(((N-1)*D) + varianza)
         }
     },
@@ -84,7 +84,7 @@ const casos = {
             return (suma*totalElementos)
         },
         'size': ({cota,N,varianza}) => {
-            const D = (cota^2)/(4*(N^2));
+            const D = (cota*cota)/(4*(N*N));
                 return (N*varianza)/(((N-1)*D) + varianza)
         }
     },
@@ -101,7 +101,7 @@ const casos = {
             return (suma/totalElementos)
         },
         'size': ({cota,N,p,q}) => {
-            const D = (cota^2)/4;
+            const D = (cota*cota)/4;
                 return (N*p*q)/(((N-1)*D) + (p*q))
         }
     }
@@ -162,7 +162,6 @@ const casos = {
 
     const size = function({type,cota,N,p,q,varianza}){
         const respuesta = casos[type]['size']({cota,N,p,q,varianza})
-
         return respuesta
     }
 
