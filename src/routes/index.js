@@ -3,51 +3,127 @@ var multer = require('multer');
 var upload = multer();
 const { parse } = require('csv-parse/sync');
 const {mediaPoblacional} = require('../Procesamiento/Media poblacional/index')
-const {varianza,cota, promedios,suma,calcularPromedio,calcularVarianza} = require('../Procesamiento/general')
+const {varianzaFormula,cota, promedios,funcionSuma,calcularPromedio,calcularVarianza, general} = require('../Procesamiento/general')
 
 const router = express.Router();
 
+
+const casos = {
+    'media':{
+        'known': ['varianza', 'N', 'n'],
+        'unknown': ['varianza', 'N', 'n'],
+        'promedio': ['suma','totalElementos'],
+        'muestra': []
+    },
+    'total':{
+        'known': ['varianza', 'N', 'n'],
+        'unknown': ['varianza', 'N', 'n'],
+        'promedio': ['promedio','totalElementos'],
+        'muestra': []
+    },
+    'proporcion':{
+        'known': ['p','N','n'],
+        'unknown':['p','q','N','n'],
+        'promedio': ['suma','totalElementos'],
+        'muestra': []
+    }
+}
+
 router.get('/', (req,res) => {
+    res.render("../views/decision.hbs")
+});
+
+router.get('/formulario', (req,res) => {
     res.render("../views/formulario.hbs")
 });
 
-router.post('/upload',upload.fields([{name: 'file', maxCount: 1}]), (req,res) => {
+router.get('/archivo', (req,res) => {
+    res.render("../views/formularioArchivo.hbs")
+});
+
+router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) => {
+
     //Recibir archivo
     const archivo = req.files;
+
     //Leer archivo
     const contenido = archivo['file'][0].buffer.toString();
+
     //Parsear archivo a un array
     const records = parse(contenido, {
         columns: false,
         skip_empty_lines: true
       });
     const datos = records[0]
-    //Mostrar datos
-    console.log(datos);
-    const sumacion = suma(datos)
-    const prom = calcularPromedio(datos)
-    const varianza2 = calcularVarianza(datos)
-    console.log(sumacion)
-    console.log(prom)
-    console.log(varianza2)
-    res.send('Ok')
+
+    const {tipo, queCalcular, isKnown} = req.body;
+
+    const varianza = calcularVarianza(datos);
+    const n = datos.length;
+    const suma = funcionSuma(datos);
+    const totalElementos = datos.length
+    const promedio = calcularPromedio(datos);
+
+    const {N, p, q, cota} = req.body
+
+    const parametros = {
+        queCalcular,
+        type: tipo,
+        isKnown,
+        varianza: Number(varianza),
+        N: Number(N),
+        n: Number(n),
+        suma: Number(suma),
+        totalElementos: Number(totalElementos),
+        promedio: Number(promedio),
+        p: Number(p),
+        q: Number(q),
+        cota: Number(cota)
+    }
+    const resultado = general(parametros);
+    console.log(resultado)
+
+    const respuesta = {
+        resultado,
+        parametros
+    }
+
+
+    res.render('../views/resultado.hbs', respuesta)
 })
 
-router.get('/pruebas', (req,res)=>{
-    const respuesta = varianza('media','known',12,50,20);
-    const cota1 = cota('media','known',12,50,20);
-    const promedio = promedios('media','promedio',200,10)
-    const sumacion = suma([1,2,3,4,5,6])
-    const prom = calcularPromedio([1,2,3,4,5,6])
-    const varianza2 = calcularVarianza([1,2,3,4,5,6])
-    console.log(respuesta)
-    console.log(cota1)
-    console.log(promedio)
-    console.log(sumacion)
-    console.log(prom)
-    console.log(varianza2)
+router.post('/upload', (req,res)=>{
 
-    res.send('oks')
+    const {tipo, queCalcular, isKnown} = req.body;
+    console.log('tipo:'+tipo);
+    console.log('queCalcular:'+queCalcular);
+    console.log('isKnown:'+isKnown);
+
+    const {N, n, varianza, suma, totalElementos, promedio, p, q, cota} = req.body
+    
+    const parametros = {
+        queCalcular,
+        type: tipo,
+        isKnown,
+        varianza: Number(varianza),
+        N: Number(N),
+        n: Number(n),
+        suma: Number(suma),
+        totalElementos: Number(totalElementos),
+        promedio: Number(promedio),
+        p: Number(p),
+        q: Number(q),
+        cota: Number(cota)
+    }
+    const resultado = general(parametros);
+    console.log(resultado)
+
+    const respuesta = {
+        resultado,
+        parametros
+    }
+
+    res.render('../views/resultado.hbs', respuesta)
 })
 
 module.exports = router;

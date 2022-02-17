@@ -9,7 +9,7 @@
     <form id="formulario" method="POST" action="/upload" enctype="multipart/form-data">
     <input id="file-upload1" type="file" class="inputfile" name="file" />
 -->                
-<form id="formulario" method="POST" action="/upload">
+<form id="formulario" method="POST" action="/archivo" enctype="multipart/form-data">
 <div class="container p-4 col-md-5">
     <div class ="row">
         <div class="card mb-4">
@@ -49,6 +49,9 @@
         </div>
     </div>
     </div>
+
+
+    <input id="file-upload1" type="file" class="inputfile" name="file" required/>
 
     <button onclick="ingresarDatos()" type="button" class="mb-4 btn btn-primary" >Ingresar Datos</button>
 
@@ -200,21 +203,21 @@
 
     const casos = {
         'media':{
-            'known': ['varianza', 'N', 'n'],
-            'unknown': ['varianza', 'N', 'n'],
-            'promedio': ['suma','totalElementos'],
-            'muestra': ['cota','N','varianza']
+            'known': ['varianza', 'N'],
+            'unknown': ['varianza', 'N'],
+            'promedio': [],
+            'muestra': ['cota','N']
         },
         'total':{
-            'known': ['varianza', 'N', 'n'],
-            'unknown': ['varianza', 'N', 'n'],
-            'promedio': ['promedio','totalElementos'],
-            'muestra': ['cota','N','varianza']
+            'known': ['N'],
+            'unknown': ['N'],
+            'promedio': [],
+            'muestra': ['cota','N']
         },
         'proporcion':{
-            'known': ['p','N','n'],
-            'unknown':['p','q','N','n'],
-            'promedio': ['suma','totalElementos'],
+            'known': ['p','N'],
+            'unknown':['p','q','N'],
+            'promedio': [],
             'muestra': ['cota','N','p','q']
         }
     }
@@ -240,7 +243,7 @@
                     datosNecesarios = casos[tipo.value]['muestra']
                 }
             }else{
-                datosNecesarios = ['N','cota','varianza'];
+                datosNecesarios = ['N','cota'];
             }
         }
 

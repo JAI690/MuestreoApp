@@ -1,0 +1,82 @@
+
+<div class="container p-4 col-md-8" style="margin-top: 40px;">
+    <div class="row">
+        <div class="card mb-6 p-1 mx-auto col-md-12">
+            <div class="card-body">
+                <h1 style="text-align: center;">{{parametros.type}} Poblacional</h1>
+            </div>
+        </div>
+        <div class="card mb-6 p-1 mx-auto col-md-12">
+            <div class="card-body">
+                <h2>Datos:</h2>
+                <table class="table table-hover">
+                    {{#if parametros.varianza}}
+                        <tr>
+                            <th>Varianza:</th>
+                            <td>{{parametros.varianza}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.N}}
+                        <tr>
+                            <th>N:</th>
+                            <td>{{parametros.N}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.n}}
+                        <tr>
+                            <th>n:</th>
+                            <td>{{parametros.n}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.suma}}
+                        <tr>
+                            <th>Suma:</th>
+                            <td>{{parametros.suma}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.totalElementos}}
+                        <tr>
+                            <th>Total Elementos:</th>
+                            <td>{{parametros.totalElementos}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.promedio}}
+                        <tr>
+                            <th>Promedio:</th>
+                            <td>{{parametros.promedio}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.q}}
+                        <tr>
+                            <th>q:</th>
+                            <td>{{parametros.q}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.p}}
+                        <tr>
+                            <th>p:</th>
+                            <td>{{parametros.p}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if parametros.cota}}
+                        <tr>
+                            <th>Cota:</th>
+                            <td>{{parametros.cota}}</td>
+                        </tr>
+                    {{/if}}
+
+                </table>
+            </div>
+        </div>
+        <div class="card mb-6 p-1 mx-auto col-md-12">
+            <div class="card-body">
+                <h2 style="text-align: center;">El {{parametros.queCalcular}} es <strong>{{resultado}}</strong></h2>
+            </div>
+        </div>
+    </div>
+    <div id="buttonArea" class="d-grid gap-2" style="margin-top: 60px;">
+        <a class="btn btn-warning" href="/">Regresar</a>
+    </div>
+
+
+</div>

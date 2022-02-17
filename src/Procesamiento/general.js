@@ -1,35 +1,53 @@
 const casos = {
     'media':{
-        'known': (varianza,N,n) => {
-            return (varianza/n)*((N-n)/(N-1))
+        'varianza':{
+            'known': ({varianza,N,n}) => {
+                return (varianza/n)*((N-n)/(N-1))
+            },
+            'unknown': ({varianza,N,n}) => {
+                return (varianza/n)*((N-n)/(N))
+            }
         },
-        'unknown': (varianza,N,n) => {
-            return (varianza/n)*((N-n)/(N))
-        },
-        'promedio': (suma,totalElementos) => {
+        'promedio': ({suma,totalElementos}) => {
             return (suma/totalElementos)
+        },
+        'size': ({cota,N,varianza}) => {
+            const D = (cota^2)/4;
+                return (N*varianza)/(((N-1)*D) + varianza)
         }
     },
     'total':{
-        'known': (varianza,N,n) => {
-            return (((N^2)*varianza)/n)*((N-n)/N-1)
+        'varianza':{
+            'known': ({varianza,N,n}) => {
+                return (((N^2)*varianza)/n)*((N-n)/N-1)
+            },
+            'unknown': ({varianza,N,n}) => {
+                return ((N*varianza)/n)*(N-n)
+            }
         },
-        'unknown': (varianza,N,n) => {
-            return ((N*varianza)/n)*(N-n)
+        'promedio': ({suma,totalElementos}) => {
+            return (suma*totalElementos)
         },
-        'total': (promedio,totalElementos) => {
-            return (promedio*totalElementos)
+        'size': ({cota,N,varianza}) => {
+            const D = (cota^2)/(4*(N^2));
+                return (N*varianza)/(((N-1)*D) + varianza)
         }
     },
     'proporcion':{
-        'known': (p,N,n) => {
-            return ((p*(1-p))/n)*((N-n)/(N-1))
+        'varianza':{
+            'known': ({p,N,n}) => {
+                return ((p*(1-p))/n)*((N-n)/(N-1))
+            },
+            'unknown': ({p,q,N,n}) => {
+                return ((p*q)/n)*((N-n)/N)
+            }
         },
-        'unknown': (p,q,N,n) => {
-            return ((p*q)/n)*((N-n)/N)
-        },
-        'promedio': (suma,totalElementos) => {
+        'promedio': ({suma,totalElementos}) => {
             return (suma/totalElementos)
+        },
+        'size': ({cota,N,p,q}) => {
+            const D = (cota^2)/4;
+                return (N*p*q)/(((N-1)*D) + (p*q))
         }
     }
 
@@ -51,23 +69,49 @@ const casos = {
     //unknown (p, q, N, n)
     //promedio (suma, totalElementos)
 
+    const general = function({queCalcular,type,isKnown,varianza, N, n, p, q,suma,totalElementos,promedio, cota}){
+        let respuesta = 'no especificada';
 
-    const varianza = function(type, isKnown, a,b,c,d=0){
-        const respuesta = casos[type][isKnown](a,b,c,d);  
+        switch (queCalcular){
+            case 'promedio': 
+                respuesta = promedios({type, suma: suma||promedio, totalElementos});
+                break
+            case 'varianza':
+                respuesta =  varianzaFormula({type,isKnown,varianza,N,n,p,q});
+                break
+            case 'cota':
+                respuesta =  cotaFormula({type,isKnown,varianza,N,n,p,q});
+                break
+            case 'muestra':
+                respuesta =  size({type,cota,N,p,q,varianza});
+                break
+        }
+        return respuesta
+    }
+    const varianzaFormula = function({type, isKnown, varianza=0, N, n, p=0, q=0 }){
+        const respuesta = casos[type]['varianza'][isKnown]({varianza,N,n,p,q});  
         return respuesta
     }
 
-    const cota =  function(type, isKnown,a,b,c,d=0){
-        const varianzaCalculada = Number(varianza(type, isKnown, a,b,c,d))
+    const cotaFormula =  function({type, isKnown,varianza=0, N, n, p=0, q=0}){
+        const varianzaCalculada = casos[type]['varianza'][isKnown]({varianza,N,n,p,q});  
+        console.log(varianzaCalculada)
         return 2*Math.sqrt(varianzaCalculada)
     }
 
-    const promedios = function(type, isKnown, suma, totalElementos){
-        const respuesta = casos[type][isKnown](suma,totalElementos);
+    const promedios = function({type, suma, totalElementos}){
+        const respuesta = casos[type]['promedio']({suma,totalElementos});
+
         return respuesta;
     }
 
-    const suma = function(array){
+    const size = function({type,cota,N,p,q,varianza}){
+        const respuesta = casos[type]['size']({cota,N,p,q,varianza})
+
+        return respuesta
+    }
+
+    const funcionSuma = function(array){
         let initialValue = 0;
         const resultado = array.reduce(
             (previousValue, currentValue) => Number(previousValue) + Number(currentValue),
@@ -82,13 +126,13 @@ const casos = {
         array.forEach(elemento => {
             resultados.push(Math.abs(elemento-promedio));
         });
-        const sumaTotal = suma(resultados);
+        const sumaTotal = funcionSuma(resultados);
         return sumaTotal/array.length
     }
 
     const calcularPromedio = function(array){
-        return suma(array)/array.length
+        return funcionSuma(array)/array.length
     }
 
 
-module.exports = {varianza,cota,promedios,suma,calcularPromedio,calcularVarianza}
+module.exports = {varianzaFormula,cotaFormula,promedios,funcionSuma,calcularPromedio,calcularVarianza,general}
