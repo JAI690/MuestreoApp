@@ -70,7 +70,45 @@
         </div>
         <div class="card mb-6 p-1 mx-auto col-md-12">
             <div class="card-body">
-                <h2 style="text-align: center;">El {{parametros.queCalcular}} es <strong>{{resultado}}</strong></h2>
+                <h2>Resultado:</h2>
+                <table class="table table-hover">
+                    {{#if resultado.estimacion}}
+                        <tr>
+                            <th>Estimado:</th>
+                            <td>{{resultado.estimacion}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if resultado.varianza}}
+                        <tr>
+                            <th>Varianza:</th>
+                            <td>{{resultado.varianza}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if resultado.cota}}
+                        <tr>
+                            <th>Cota:</th>
+                            <td>{{resultado.cota}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if resultado.margen}}
+                        <tr>
+                            <th>Margen de error:</th>
+                            <td>{{resultado.margen}}%</td>
+                        </tr>
+                    {{/if}}
+                    {{#if resultado.minimo}}
+                        <tr>
+                            <th>Intervalo de Confianza:</th>
+                            <td>( {{resultado.minimo}} - {{resultado.maximo}} )</td>
+                        </tr>
+                    {{/if}}
+                    {{#if resultado.muestra}}
+                        <tr>
+                            <th>Tamaño de la muestra:</th>
+                            <td>{{resultado.muestra}}</td>
+                        </tr>
+                    {{/if}}
+                </table>
             </div>
         </div>
     </div>

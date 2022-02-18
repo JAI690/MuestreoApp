@@ -56,7 +56,7 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
       });
     const datos = records[0]
 
-    const {tipo, queCalcular, isKnown} = req.body;
+    const {tipo} = req.body;
 
     const varianza = calcularVarianza(datos);
     const n = datos.length;
@@ -67,9 +67,7 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
     const {N, p, q, cota} = req.body
 
     const parametros = {
-        queCalcular,
         type: tipo,
-        isKnown,
         varianza: Number(varianza),
         N: Number(N),
         n: Number(n),
@@ -94,17 +92,15 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
 
 router.post('/upload', (req,res)=>{
 
-    const {tipo, queCalcular, isKnown} = req.body;
+    const {tipo, categoria} = req.body;
     console.log('tipo:'+tipo);
-    console.log('queCalcular:'+queCalcular);
-    console.log('isKnown:'+isKnown);
+    console.log('categoria:'+categoria);
 
     const {N, n, varianza, suma, totalElementos, promedio, p, q, cota} = req.body
     
     const parametros = {
-        queCalcular,
         type: tipo,
-        isKnown,
+        categoria,
         varianza: Number(varianza),
         N: Number(N),
         n: Number(n),

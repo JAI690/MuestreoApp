@@ -18,14 +18,14 @@
 
                     <!-- Tipo -->
                     <div class="input-group">
-                        <label for="validationCustom04" class="input-group-text" for="inputGroupSelect01">Tipo</label>
+                        <label for="validationCustom04" class="input-group-text" for="inputGroupSelect01">Estimar</label>
                         <select id="tipo" class="form-select" id="inputGroupSelect01" name="tipo">
                             <option disabled selected>Elegir...</option>
-                            <option value="media">Poblacional</option>
-                            <option value="total">Total</option>
-                            <option value="proporcion">Proporcional</option>
+                            <option value="media">Media Poblacional</option>
+                            <option value="total">Total Poblacional</option>
+                            <option value="proporcion">Proporcion Poblacional</option>
                         </select>
-                    </div>                    
+                    </div>                               
                 </div>
         </div>
 
@@ -81,171 +81,20 @@
 
 
     //Si selecciono algo diferente a la muestra debo elegir que quiero calcular
-    tipo.addEventListener('change', () => {
-        const lugarBoton = document.getElementById('buttonArea')
-        while(areaDatos.firstChild){
-            areaDatos.removeChild(areaDatos.lastChild);
-        }
-         while(lugarBoton.firstChild){
-            lugarBoton.removeChild(lugarBoton.lastChild);
-        }
-
-        const calcularSelect = document.getElementById("calcular");
-        while(calcularSelect.firstChild){
-            calcularSelect.removeChild(calcularSelect.lastChild);
-        }
-        const varianza = document.getElementById("varianza");
-        while(varianza.firstChild){
-            varianza.removeChild(varianza.lastChild);
-        }
-        if(tipo.value !== 'muestra'){
-
-            const select = document.createElement("select");
-            select.setAttribute('name','queCalcular')
-            select.setAttribute("id","queCalcular");
-            select.setAttribute("class","form-select")
-
-            const label1 = document.createElement('label');
-            const textlabel1 = document.createTextNode('Calcular')
-            label1.appendChild(textlabel1)
-            label1.setAttribute('class','input-group-text')
-
-            //Agregar opciones
-            const option = document.createElement("option");
-            const text = document.createTextNode("Promedio");
-            option.setAttribute("value","promedio")
-            option.appendChild(text)
-            select.appendChild(option)
-
-            const option2 = document.createElement("option");
-            const text2 = document.createTextNode("Varianza");
-            option2.setAttribute("value","varianza")
-            option2.appendChild(text2)
-            select.appendChild(option2)
-
-            const option3 = document.createElement("option");
-            const text3 = document.createTextNode("Cota");
-            option3.setAttribute("value","cota")
-            option3.appendChild(text3)
-            select.appendChild(option3)
-
-            const option4 = document.createElement("option");
-            const text4 = document.createTextNode("Tamaño de muestra");
-            option4.setAttribute("value","muestra")
-            option4.appendChild(text4)
-            select.appendChild(option4)
-
-            calcularSelect.appendChild(label1);
-            calcularSelect.appendChild(select);
-            
-
-            const queCalcular = document.getElementById("queCalcular");
-
-            queCalcular.addEventListener('change', () => {
-                while(varianza.firstChild){
-                    varianza.removeChild(varianza.lastChild);
-                }
-                while(areaDatos.firstChild){
-                    areaDatos.removeChild(areaDatos.lastChild);
-                }
-                 while(lugarBoton.firstChild){
-            lugarBoton.removeChild(lugarBoton.lastChild);
-        }
-
-
-                if(queCalcular.value !== 'promedio' & queCalcular.value !== 'muestra'){
-                    const select2 = document.createElement("select");
-                    select2.setAttribute('name','isKnown');
-                    select2.setAttribute('id','isKnown');
-                    select2.setAttribute("class","form-select")
-
-                    const label2 = document.createElement('label');
-                    const textlabel2 = document.createTextNode('¿Conoces la varianza?')
-                    label2.appendChild(textlabel2)
-                    label2.setAttribute('class','input-group-text')
-
-
-                    //Agregar opciones
-                    const optionY = document.createElement("option");
-                    const textY = document.createTextNode("Si");
-                    optionY.setAttribute("value","known");
-                    optionY.appendChild(textY)
-                    select2.appendChild(optionY)
-
-                    const optionN = document.createElement("option");
-                    const textN = document.createTextNode("No");
-                    optionN.setAttribute("value","unknown");
-                    optionN.appendChild(textN)
-                    select2.appendChild(optionN);
-
-                    varianza.appendChild(label2)
-                    varianza.appendChild(select2);
-                    
-
-                    varianza.addEventListener('change', () => {
-                        while(areaDatos.firstChild){
-                            areaDatos.removeChild(areaDatos.lastChild);
-                        }
-                         while(lugarBoton.firstChild){
-            lugarBoton.removeChild(lugarBoton.lastChild);
-        }
-
-                    })
-                }
-            });
-        }else{
-
-        }
-    });
 
 
     //Ingresar Datos
 
+
     const casos = {
-        'media':{
-            'known': ['varianza', 'N'],
-            'unknown': ['varianza', 'N'],
-            'promedio': [],
-            'muestra': ['cota','N']
-        },
-        'total':{
-            'known': ['N'],
-            'unknown': ['N'],
-            'promedio': ['N'],
-            'muestra': ['cota','N']
-        },
-        'proporcion':{
-            'known': ['p','N'],
-            'unknown':['p','q','N'],
-            'promedio': [],
-            'muestra': ['cota','N','p','q']
-        }
+        'media': [ 'N'],
+        'total': [ 'N'],
+        'proporcion': ['p','q','N'],
     }
     const ingresarDatos = function(){
-
-        const tipo = document.getElementById('tipo');
-        let datosNecesarios = []
-
-        if(tipo.value!=='Elegir...'){
-            const areaDatos = document.getElementById('datos');
-            const tipo = document.getElementById('tipo');
-
-            if(tipo.value!=='muestra'){
-                const queCalcular = document.getElementById('queCalcular');
-                
-                if(queCalcular.value!=='promedio' & queCalcular.value !== 'muestra'){
-                    const isKnown = document.getElementById('isKnown');
-                    datosNecesarios = casos[tipo.value][isKnown.value]
-
-                }else if(queCalcular.value==='promedio'){
-                    datosNecesarios = casos[tipo.value]['promedio']
-                }else{
-                    datosNecesarios = casos[tipo.value]['muestra']
-                }
-            }else{
-                datosNecesarios = ['N','cota'];
-            }
-        }
+        const tipo = document.getElementById('tipo')
+        
+        let datosNecesarios = casos[tipo.value]
 
         const areaDatos = document.getElementById('areaDatos');
         const inputs = crearInputs(datosNecesarios);

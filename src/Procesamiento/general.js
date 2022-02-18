@@ -55,16 +55,11 @@ const casos2 = {
 
 const casos = {
     'media':{
-        'varianza':{
-            'known': ({varianza}) => {
-                return varianza
-            },
-            'unknown': ({varianza,N,n}) => {
+        'varianza': ({varianza,N,n}) => {
                 return (varianza/n)*((N-n)/(N))
-            }
         },
-        'promedio': ({suma,totalElementos}) => {
-            return (suma/totalElementos)
+        'promedio': ({suma,n}) => {
+            return (suma/n)
         },
         'size': ({cota,N,varianza}) => {
             const D = (cota*cota)/4;
@@ -72,13 +67,8 @@ const casos = {
         }
     },
     'total':{
-        'varianza':{
-            'known': ({varianza}) => {
-                return varianza
-            },
-            'unknown': ({varianza,N,n}) => {
-                return ((N*varianza)/n)*(N-n)
-            }
+        'varianza': ({varianza,N,n}) => {
+            return ((N*varianza)/n)*(N-n)
         },
         'promedio': ({promedio,N}) => {
             return (promedio*N)
@@ -89,13 +79,8 @@ const casos = {
         }
     },
     'proporcion':{
-        'varianza':{
-            'known': ({varianza}) => {
-                return varianza
-            },
-            'unknown': ({p,q,N,n}) => {
+        'varianza': ({p,q,N,n}) => {
                 return ((p*q)/n)*((N-n)/N)
-            }
         },
         'promedio': ({suma,totalElementos}) => {
             return (suma/totalElementos)
@@ -124,7 +109,7 @@ const casos = {
     //unknown (p, q, N, n)
     //promedio (suma, totalElementos)
 
-    const general = function({queCalcular,type,isKnown,varianza, N, n, p, q,suma,totalElementos,promedio, cota}){
+    const general2 = function({queCalcular,type,isKnown,varianza, N, n, p, q,suma,totalElementos,promedio, cota}){
         let respuesta = 'no especificada';
 
         switch (queCalcular){
@@ -143,25 +128,46 @@ const casos = {
         }
         return respuesta
     }
-    const varianzaFormula = function({type, isKnown, varianza=0, N, n, p=0, q=0 }){
-        const respuesta = casos[type]['varianza'][isKnown]({varianza,N,n,p,q});  
+
+    const general = function({type,varianza, N, n, p, q,suma,categoria,promedio, cota}){
+        let respuesta = {};
+
+        switch (type){
+            default:
+                respuesta['estimacion'] = promedios({type, suma,promedio, n,N});
+                respuesta['varianza'] =  varianzaFormula({type,varianza,N,n,p,q});
+                respuesta['cota'] =  cotaFormula({type,varianza,N,n,p,q});
+                respuesta['margen'] = respuesta['cota']/respuesta['estimacion']*100
+                respuesta['minimo'] = respuesta['estimacion']-respuesta['cota']
+                respuesta['maximo'] = respuesta['estimacion']+respuesta['cota']
+
+                break
+            case 'muestra':
+                respuesta['muestra'] =  size({categoria,cota,N,p,q,varianza});
+                break
+        }
         return respuesta
     }
 
-    const cotaFormula =  function({type, isKnown,varianza=0, N, n, p=0, q=0}){
-        const varianzaCalculada = casos[type]['varianza'][isKnown]({varianza,N,n,p,q});  
+    const varianzaFormula = function({type, varianza=0, N, n, p=0, q=0 }){
+        const respuesta = casos[type]['varianza']({varianza,N,n,p,q});  
+        return respuesta
+    }
+
+    const cotaFormula =  function({type,varianza=0, N, n, p=0, q=0}){
+        const varianzaCalculada = casos[type]['varianza']({varianza,N,n,p,q});  
         console.log(varianzaCalculada)
         return 2*Math.sqrt(varianzaCalculada)
     }
 
-    const promedios = function({type, suma, totalElementos,N,promedio}){
-        const respuesta = casos[type]['promedio']({suma,totalElementos,N,promedio});
+    const promedios = function({type, suma, n,N,promedio}){
+        const respuesta = casos[type]['promedio']({suma,n,N,promedio});
 
         return respuesta;
     }
 
-    const size = function({type,cota,N,p,q,varianza}){
-        const respuesta = casos[type]['size']({cota,N,p,q,varianza})
+    const size = function({categoria,cota,N,p,q,varianza}){
+        const respuesta = casos[categoria]['size']({cota,N,p,q,varianza})
         return respuesta
     }
 
@@ -181,7 +187,7 @@ const casos = {
             resultados.push(Math.abs(elemento-promedio));
         });
         const sumaTotal = funcionSuma(resultados);
-        return sumaTotal/array.length
+        return sumaTotal
     }
 
     const calcularPromedio = function(array){
