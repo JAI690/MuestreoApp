@@ -125,34 +125,14 @@
 
     //Ingresar Datos
 
-    const casos2 = {
-        'media':{
-            'known': ['varianza', 'N', 'n'],
-            'unknown': ['varianza', 'N', 'n'],
-            'promedio': ['suma','totalElementos'],
-            'muestra': ['cota','N','varianza']
-        },
-        'total':{
-            'known': ['varianza', 'N', 'n'],
-            'unknown': ['varianza', 'N', 'n'],
-            'promedio': ['promedio','totalElementos'],
-            'muestra': ['cota','N','varianza']
-        },
-        'proporcion':{
-            'known': ['p','N','n'],
-            'unknown':['p','q','N','n'],
-            'promedio': ['suma','totalElementos'],
-            'muestra': ['cota','N','p','q']
-        }
-    }
 
     const casos = {
-        'media': ['varianza', 'N', 'n','suma'],
-        'total': ['varianza', 'N', 'n', 'promedio'],
+        'media': ['sigma', 'N', 'n','suma'],
+        'total': ['sigma', 'N', 'n', 'promedio'],
         'proporcion': ['p','q','N','n','suma'],
         'muestra': {
-            'media':['cota','N','varianza'],
-            'total': ['cota','N','varianza'],
+            'media':['cota','N','sigma'],
+            'total': ['cota','N','sigma'],
             'proporcion': ['cota','N','p','q']
         }
     }
