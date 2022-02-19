@@ -8,7 +8,9 @@
 <!-- 
     <form id="formulario" method="POST" action="/upload" enctype="multipart/form-data">
     <input id="file-upload1" type="file" class="inputfile" name="file" />
--->                
+-->       
+
+<link rel="stylesheet" href="/general.css" type="text/css">
 <form id="formulario" method="POST" action="/archivo" enctype="multipart/form-data">
 <div class="container p-4 col-md-5">
     <div class ="row">
@@ -50,8 +52,16 @@
     </div>
     </div>
 
-
-    <input id="file-upload1" type="file" class="inputfile" name="file" required/>
+    <!-- subir Archivo -->
+    <!-- <input class id="file-upload1" type="file" class="inputfile" name="file" required/> -->
+    <div  class="content">
+    <div class="button d-grid gap-2">
+        <label for="file-upload1">
+            Subir Archivo
+        </label>
+        <input id="file-upload1" type="file" class="inputfile" name="file" required/>
+    </div>
+    </div>
 
     <button onclick="ingresarDatos()" type="button" class="mb-4 btn btn-primary" >Ingresar Datos</button>
 
@@ -91,6 +101,8 @@
         'total': [ 'N'],
         'proporcion': ['p','q','N'],
     }
+
+    
     const ingresarDatos = function(){
         const tipo = document.getElementById('tipo')
         
@@ -170,3 +182,114 @@ const crearInputs = function(array){
 
 
  </script>
+
+
+    <style>
+        input[type="file"] {
+            display: none;
+        }
+        .title{
+            text-align: left;
+            margin:auto;
+            width: 100%;
+            font-weight: bolder;
+        }
+        .cuerpo{
+            width: 90%;
+            margin-top: 2%;
+        }
+        .content {
+            width: 100%;
+            margin: auto;
+            text-align: left;
+            margin-top: 3%;
+            color: rgba(76,88,87,1);
+            font-weight: bold;
+        }
+        .content h3{
+            color: rgba(80,77,140,1);
+            margin-bottom: 30px;
+        }
+        .content .button{
+            width: 90%;
+            background-color: rgba(213,211,229,1);
+            color: rgba(76,88,87,1);
+            border: 2px solid rgba(80,77,140,1);
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .content .button:hover{
+            width: 90%;
+            background-color: rgba(80,77,140,1);;
+            color: white;
+            border: 2px solid rgba(80,77,140,1) ;
+            cursor: pointer;
+        }
+        .button label:hover{
+            cursor: pointer;
+        }
+        .button label{
+            font-size: 20px;
+            padding: 0px;
+            text-align: center;
+            width: 100%;
+        }
+        .montain{
+            height:20%;
+        }
+        nav .button{
+            background-color: white;
+            border: none;
+            color: rgba(9,119,248);
+            font-weight: lighter;
+        }
+        nav .button:hover{
+            text-decoration: underline;
+            background-color: inherit;
+            color:rgba(9,119,248);
+        }
+        input[type='file']:active{
+            background-color: white;
+            font-size: 300px;
+        }
+        .pruebas{
+            margin: auto;
+            width: 50%;
+            margin-left: 25%;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .prueba{
+            margin:auto;
+            display: inline;
+            margin-left:22%;
+        }
+        .prueba:hover{
+            cursor: pointer;
+        }
+    </style>
+<script>
+const inputs = document.getElementsByClassName( 'inputfile' );
+
+Array.prototype.forEach.call( inputs, function( input )
+{
+
+	const label= input.previousElementSibling;
+    const labelVal = label.innerHTML;
+
+	input.addEventListener( 'change', function( e )
+	{
+		var fileName = '';
+		if( this.files && this.files.length > 1 )
+			fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+		else
+			fileName = e.target.value.split('\'\'').pop();
+
+		if( fileName )
+			label.innerHTML = fileName.split("\\")[2];
+		else
+			label.innerHTML = labelVal;
+        
+	});
+});
+</script>

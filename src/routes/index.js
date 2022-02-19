@@ -96,12 +96,12 @@ router.post('/upload', (req,res)=>{
     console.log('tipo:'+tipo);
     console.log('categoria:'+categoria);
 
-    const {N, n, sigma, suma, totalElementos, promedio, p, q, cota} = req.body
+    const {N, n, varianza_poblacional, varianza_muestral, suma, totalElementos, promedio, p, q, cota} = req.body
     
     const parametros = {
         type: tipo,
         categoria,
-        varianza: Number(sigma),
+        varianza: Number(varianza_muestral||varianza_poblacional),
         N: Number(N),
         n: Number(n),
         suma: Number(suma),
