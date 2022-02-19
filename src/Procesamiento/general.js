@@ -82,8 +82,8 @@ const casos = {
         'varianza': ({p,q,N,n}) => {
                 return ((p*q)/n)*((N-n)/N)
         },
-        'promedio': ({suma,totalElementos}) => {
-            return (suma/totalElementos)
+        'promedio': ({suma,n}) => {
+            return (suma/n)
         },
         'size': ({cota,N,p,q}) => {
             const D = (cota*cota)/4;
@@ -184,10 +184,10 @@ const casos = {
         const promedio = calcularPromedio(array);
         const resultados = []
         array.forEach(elemento => {
-            resultados.push(Math.abs(elemento-promedio));
+            resultados.push(Math.pow(elemento-promedio,2));
         });
         const sumaTotal = funcionSuma(resultados);
-        return sumaTotal
+        return sumaTotal/(array.length-1)
     }
 
     const calcularPromedio = function(array){
