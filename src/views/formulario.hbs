@@ -15,9 +15,18 @@
         <div class="card mb-4">
         <div class="col-md-12 mx-auto">
                 <div class="card-body">
+                    <!-- Muestreo -->
+                    <div class="input-group col-md-12 mb-3">
+                        <label for="validationCustom04" class="input-group-text" for="inputGroupSelect01">Tipo de muestreo</label>
+                        <select id="muestreo" class="form-select" id="inputGroupSelect01" name="muestreo">
+                            <option disabled selected>Elegir...</option>
+                            <option value="MAS">Muestreo Aleatorio Simple</option>
+                            <option value="MAE">Muestreo Aleatorio Estratificado</option>
+                        </select>
+                    </div>      
 
                     <!-- Tipo -->
-                    <div class="input-group">
+                    <div class="input-group col-md-12">
                         <label for="validationCustom04" class="input-group-text" for="inputGroupSelect01">Estimar</label>
                         <select id="tipo" class="form-select" id="inputGroupSelect01" name="tipo">
                             <option disabled selected>Elegir...</option>
@@ -127,18 +136,24 @@
 
 
     const casos = {
-        'media': ['varianza_muestral', 'N', 'n','suma'],
-        'total': ['varianza_muestral', 'N', 'n', 'promedio'],
-        'proporcion': ['p','q','N','n','suma'],
-        'muestra': {
-            'media':['cota','N','varianza_poblacional'],
-            'total': ['cota','N','varianza_poblacional'],
-            'proporcion': ['cota','N','p','q']
+        'MAS':{
+            'media': ['varianza_muestral', 'N', 'n','suma'],
+            'total': ['varianza_muestral', 'N', 'n', 'promedio'],
+            'proporcion': ['p','q','N','n','suma'],
+            'muestra': {
+                'media':['cota','N','varianza_poblacional'],
+                'total': ['cota','N','varianza_poblacional'],
+                'proporcion': ['cota','N','p','q']
+            }
+        },
+        'MAE': {
+
         }
     }
 
     const ingresarDatos = function(){
 
+        const muestreo = document.getElementById('muestreo')
         const tipo = document.getElementById('tipo');
         const categoria = document.getElementById('categoria');
         let datosNecesarios = []
@@ -148,9 +163,9 @@
             const tipo = document.getElementById('tipo');
 
             if(tipo.value!=='muestra'){
-                datosNecesarios = casos[tipo.value]
+                datosNecesarios = casos[muestreo][tipo.value]
             }else{
-                datosNecesarios = casos['muestra'][categoria.value];
+                datosNecesarios = casos[muestreo]['muestra'][categoria.value];
             }
         }
 

@@ -54,41 +54,46 @@ const casos2 = {
 }
 
 const casos = {
-    'media':{
-        'varianza': ({varianza,N,n}) => {
-                return (varianza/n)*((N-n)/(N))
+    'MAS':{
+        'media':{
+            'varianza': ({varianza,N,n}) => {
+                    return (varianza/n)*((N-n)/(N))
+            },
+            'promedio': ({suma,n}) => {
+                return (suma/n)
+            },
+            'size': ({cota,N,varianza}) => {
+                const D = (cota*cota)/4;
+                    return (N*varianza)/(((N-1)*D) + varianza)
+            }
         },
-        'promedio': ({suma,n}) => {
-            return (suma/n)
+        'total':{
+            'varianza': ({varianza,N,n}) => {
+                return ((N*varianza)/n)*(N-n)
+            },
+            'promedio': ({promedio,N}) => {
+                return (promedio*N)
+            },
+            'size': ({cota,N,varianza}) => {
+                const D = (cota*cota)/(4*(N*N));
+                    return (N*varianza)/(((N-1)*D) + varianza)
+            }
         },
-        'size': ({cota,N,varianza}) => {
-            const D = (cota*cota)/4;
-                return (N*varianza)/(((N-1)*D) + varianza)
+        'proporcion':{
+            'varianza': ({p,q,N,n}) => {
+                    return ((p*q)/n)*((N-n)/N)
+            },
+            'promedio': ({suma,n}) => {
+                return (suma/n)
+            },
+            'size': ({cota,N,p,q}) => {
+                const D = (cota*cota)/4;
+                    return (N*p*q)/(((N-1)*D) + (p*q))
+            }
         }
     },
-    'total':{
-        'varianza': ({varianza,N,n}) => {
-            return ((N*varianza)/n)*(N-n)
-        },
-        'promedio': ({promedio,N}) => {
-            return (promedio*N)
-        },
-        'size': ({cota,N,varianza}) => {
-            const D = (cota*cota)/(4*(N*N));
-                return (N*varianza)/(((N-1)*D) + varianza)
-        }
-    },
-    'proporcion':{
-        'varianza': ({p,q,N,n}) => {
-                return ((p*q)/n)*((N-n)/N)
-        },
-        'promedio': ({suma,n}) => {
-            return (suma/n)
-        },
-        'size': ({cota,N,p,q}) => {
-            const D = (cota*cota)/4;
-                return (N*p*q)/(((N-1)*D) + (p*q))
-        }
+    'MAE':{
+
     }
 
 }
@@ -129,45 +134,45 @@ const casos = {
         return respuesta
     }
 
-    const general = function({type,varianza, N, n, p, q,suma,categoria,promedio, cota}){
+    const general = function({muestreo, type,varianza, N, n, p, q,suma,categoria,promedio, cota}){
         let respuesta = {};
 
         switch (type){
             default:
-                respuesta['estimacion'] = promedios({type, suma,promedio, n,N});
-                respuesta['varianza'] =  varianzaFormula({type,varianza,N,n,p,q});
-                respuesta['cota'] =  cotaFormula({type,varianza,N,n,p,q});
+                respuesta['estimacion'] = promedios({muestreo,type, suma,promedio, n,N});
+                respuesta['varianza'] =  varianzaFormula({muestreo,type,varianza,N,n,p,q});
+                respuesta['cota'] =  cotaFormula({muestreo,type,varianza,N,n,p,q});
                 respuesta['margen'] = respuesta['cota']/respuesta['estimacion']*100
                 respuesta['minimo'] = respuesta['estimacion']-respuesta['cota']
                 respuesta['maximo'] = respuesta['estimacion']+respuesta['cota']
 
                 break
             case 'muestra':
-                respuesta['muestra'] =  size({categoria,cota,N,p,q,varianza});
+                respuesta['muestra'] =  size({muestreo,categoria,cota,N,p,q,varianza});
                 break
         }
         return respuesta
     }
 
-    const varianzaFormula = function({type, varianza=0, N, n, p=0, q=0 }){
-        const respuesta = casos[type]['varianza']({varianza,N,n,p,q});  
+    const varianzaFormula = function({muestreo,type, varianza=0, N, n, p=0, q=0 }){
+        const respuesta = casos[muestreo][type]['varianza']({varianza,N,n,p,q});  
         return respuesta
     }
 
-    const cotaFormula =  function({type,varianza=0, N, n, p=0, q=0}){
-        const varianzaCalculada = casos[type]['varianza']({varianza,N,n,p,q});  
+    const cotaFormula =  function({muestreo,type,varianza=0, N, n, p=0, q=0}){
+        const varianzaCalculada = casos[muestreo][type]['varianza']({varianza,N,n,p,q});  
         console.log(varianzaCalculada)
         return 2*Math.sqrt(varianzaCalculada)
     }
 
-    const promedios = function({type, suma, n,N,promedio}){
-        const respuesta = casos[type]['promedio']({suma,n,N,promedio});
+    const promedios = function({muestreo, type, suma, n,N,promedio}){
+        const respuesta = casos[muestreo][type]['promedio']({suma,n,N,promedio});
 
         return respuesta;
     }
 
-    const size = function({categoria,cota,N,p,q,varianza}){
-        const respuesta = casos[categoria]['size']({cota,N,p,q,varianza})
+    const size = function({muestreo,categoria,cota,N,p,q,varianza}){
+        const respuesta = casos[muestreo][categoria]['size']({cota,N,p,q,varianza})
         return respuesta
     }
 

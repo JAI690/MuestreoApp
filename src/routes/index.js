@@ -92,13 +92,15 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
 
 router.post('/upload', (req,res)=>{
 
-    const {tipo, categoria} = req.body;
+    const {muestreo, tipo, categoria} = req.body;
+    console.log('muestreo:'+muestreo);
     console.log('tipo:'+tipo);
     console.log('categoria:'+categoria);
 
     const {N, n, varianza_poblacional, varianza_muestral, suma, totalElementos, promedio, p, q, cota} = req.body
     
     const parametros = {
+        muestreo: muestreo,
         type: tipo,
         categoria,
         varianza: Number(varianza_muestral||varianza_poblacional),
