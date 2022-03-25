@@ -92,33 +92,128 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
 
 router.post('/upload', (req,res)=>{
 
-    const {muestreo, tipo, categoria} = req.body;
+    const {muestreo, tipo, categoria, asignacion} = req.body;
     console.log('muestreo:'+muestreo);
     console.log('tipo:'+tipo);
     console.log('categoria:'+categoria);
+    console.log('asignacion:'+asignacion);
 
-    const {N, n, varianza_poblacional, varianza_muestral, suma, totalElementos, promedio, p, q, cota} = req.body
-    
+    const {numeroEstratos, N, n, varianza_poblacional, varianza_muestral, suma, totalElementos, promedio, p, q, cota, cotaMuestra, costo} = req.body
+
     const parametros = {
+        asignacion: asignacion,
         muestreo: muestreo,
         type: tipo,
         categoria,
-        varianza: Number(varianza_muestral||varianza_poblacional),
-        N: Number(N),
-        n: Number(n),
-        suma: Number(suma),
-        totalElementos: Number(totalElementos),
-        promedio: Number(promedio),
-        p: Number(p),
-        q: Number(q),
-        cota: Number(cota)
+        varianza: varianza_muestral||varianza_poblacional,
+        N: N,
+        n: n,
+        suma: suma,
+        totalElementos: totalElementos,
+        promedio: promedio,
+        p: p,
+        q: q,
+        cota: cota,
+        estratos: numeroEstratos,
+        cotaMuestra: cotaMuestra,
+        costo: costo
     }
-    const resultado = general(parametros);
-    console.log(resultado)
+    
+    let resultadoFinal = {};
 
+    const resultado = general(parametros);
+
+
+    resultadoFinal = {...resultado};
+    const datos = Object.keys(resultado)
+    const resultados = [];
+
+    for(let i=0; i<numeroEstratos; i++){
+        let objeto = {}
+        datos.forEach((dato) => {
+            objeto[dato] = resultado[dato][i]
+        });
+        resultados.push(objeto)
+    }
+
+
+    const condicionesAgregados = {
+        'media': {
+            'estimacion': (suma,N) => {
+                return suma/N;
+            },
+            'varianza': (suma,N) => {
+                return suma/(N*N);
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        },
+        'total': {
+            'estimacion': (suma) => {
+                return (suma);
+            },
+            'varianza': (suma) => {
+                return (suma);
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        },
+        'proporcion': {
+            'estimacion': (suma,N) => {
+                return (suma/N);
+            },
+            'varianza': (suma,N) => {
+                return (suma/(N*N));
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        }
+    }
+
+    const sumarArray = (array)=>{
+        let initial = 0;
+        return array.reduce((prev,current)=>Number(prev)+Number(current),initial);
+    }
+
+    let agregado = {}
+    if(muestreo==='MAE'){
+        if(tipo==='muestra'){
+
+        }else{
+            let sumapromedios = sumarArray(resultado.estimacion)
+            let sumavarianzas = sumarArray(resultado.varianza)
+            let sumaN = sumarArray(N);
+
+            const estimacionAgregada = condicionesAgregados[tipo]['estimacion'](sumapromedios,sumaN);
+            const varianzaAgregada = condicionesAgregados[tipo]['varianza'](sumavarianzas,sumaN);
+            const cotaAgregada = condicionesAgregados[tipo]['cota'](varianzaAgregada);
+            const margenAgregada = cotaAgregada/estimacionAgregada*100;
+            const minimoAgregada = estimacionAgregada-cotaAgregada;
+            const maximoAgregada = estimacionAgregada+cotaAgregada;
+
+            agregado['estimacion'] = estimacionAgregada;
+            agregado['varianza'] = varianzaAgregada;
+            agregado['cota'] = cotaAgregada;
+            agregado['margen'] = margenAgregada;
+            agregado['minimo'] = minimoAgregada;
+            agregado['maximo'] = maximoAgregada;
+
+            resultadoFinal = agregado;
+        }
+    }
+    //console.log(resultados);
+
+
+
+    console.log('agregado', agregado)
+    console.log(resultado)
     const respuesta = {
-        resultado,
-        parametros
+        resultado:resultadoFinal,
+        parametros,
+        resultados
     }
 
     res.render('../views/resultado.hbs', respuesta)

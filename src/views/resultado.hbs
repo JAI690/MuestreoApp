@@ -68,9 +68,10 @@
                 </table>
             </div>
         </div>
+
         <div class="card mb-6 p-1 mx-auto col-md-12">
             <div class="card-body">
-                <h2>Resultado:</h2>
+                <h2>resultado:</h2>
                 <table class="table table-hover">
                     {{#if resultado.estimacion}}
                         <tr>
@@ -107,10 +108,63 @@
                             <th>Tamaño de la muestra:</th>
                             <td>{{resultado.muestra}}</td>
                         </tr>
-                    {{/if}}
-                </table>
+                    {{/if}}    
+                </table> 
+                <br>
             </div>
         </div>
+  
+        <div class="card mb-6 p-1 mx-auto col-md-12">
+            <div class="card-body">
+                {{#each resultados}}
+                    <h3>Estrato</h3>
+                <table class="table table-hover">
+                    {{#if estimacion}}
+                        <tr>
+                            <th>Estimado:</th>
+                            <td>{{estimacion}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if varianza}}
+                        <tr>
+                            <th>Varianza:</th>
+                            <td>{{varianza}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if cota}}
+                        <tr>
+                            <th>Cota:</th>
+                            <td>{{cota}}</td>
+                        </tr>
+                    {{/if}}
+                    {{#if margen}}
+                        <tr>
+                            <th>Margen de error:</th>
+                            <td>{{margen}}%</td>
+                        </tr>
+                    {{/if}}
+                    {{#if minimo}}
+                        <tr>
+                            <th>Intervalo de Confianza:</th>
+                            <td>( {{minimo}} , {{maximo}} )</td>
+                        </tr>
+                    {{/if}}
+                    {{#if muestra}}
+                        <tr>
+                            <th>Tamaño de la muestra:</th>
+                            <td>{{muestra}}</td>
+                        </tr>
+                    {{/if}}    
+                </table> 
+                <br>
+                {{/each}}
+                
+
+            </div>
+        </div>
+        <br>
+ 
+
     </div>
     <div id="buttonArea" class="d-grid gap-2" style="margin-top: 60px;">
         <a class="btn btn-warning" href="/">Regresar</a>

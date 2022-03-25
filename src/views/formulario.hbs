@@ -39,6 +39,38 @@
                 </div>
         </div>
 
+    <!--- SOLO para el estratificado -->
+    <div class="col-md-12 mx-auto">
+        <div class="">
+            <div class="card-body">
+                <!-- Numero de estratos -->
+                <div id="numeroEstratos" class="form-group">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12 mx-auto">
+        <div class="">
+            <div class="card-body">
+                <!-- Tipo de distribucion de los estratos -->
+                <div id="asignacion" class="input-group">
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="col-md-12 mx-auto">
+        <div class="">
+            <div class="card-body">
+                <!-- costo de asinacin -->
+                <div id="costo" class="input-group">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-12 mx-auto">
         <div class="">
             <div class="card-body">
@@ -83,53 +115,225 @@
 
 
  <script>
+     // Dependiendo del tipo de muestreo vamos a cambiar algo
+
+     const muestreo = document.getElementById('muestreo');
 
      const tipo = document.getElementById('tipo');
 
-     tipo.addEventListener('change', () => {
+     const functionForMAS = () => {
                 
-        const espacio = document.getElementById('calcular')
+        const espacio = document.getElementById('calcular');
         while(espacio.firstChild){
             espacio.removeChild(espacio.lastChild);
         }
 
-        if(tipo.value === 'muestra'){
-            const calcular = document.getElementById('calcular');
-
-            const select = document.createElement('select');
-
-            const option1 = document.createElement('option');
-            const texto1 = document.createTextNode('Media Poblacional');
-            option1.setAttribute('value','media');
-            option1.appendChild(texto1);
-
-            const option2 = document.createElement('option');
-            const texto2 = document.createTextNode('Total Poblacional');
-            option2.setAttribute('value','total');
-            option2.appendChild(texto2);
-
-            const option3 = document.createElement('option');
-            const texto3 = document.createTextNode('Proporcion Poblacional');
-            option3.setAttribute('value','proporcion');
-            option3.appendChild(texto3);
-
-            select.appendChild(option1);
-            select.appendChild(option2);
-            select.appendChild(option3);
-
-            select.setAttribute('class','form-select');
-            select.setAttribute('name','categoria');
-            select.setAttribute('id','categoria');
-
-            const label = document.createElement('label');
-            const textoLabel = document.createTextNode('Tipo');
-            label.appendChild(textoLabel)
-            label.setAttribute('class','input-group-text')
-
-            calcular.appendChild(label)
-            calcular.appendChild(select)
+        const asignacion = document.getElementById('asignacion');
+        while(asignacion.firstChild){
+            asignacion.removeChild(asignacion.lastChild);
         }
-     });
+
+        const costo = document.getElementById('costo');
+        while(costo.firstChild){
+            costo.removeChild(costo.lastChild);
+        }
+
+        if(tipo.value === 'muestra'){
+            switch(muestreo.value){
+                case 'MAS': {
+                    const calcular = document.getElementById('calcular');
+
+                    const select = document.createElement('select');
+
+                    const option1 = document.createElement('option');
+                    const texto1 = document.createTextNode('Media Poblacional');
+                    option1.setAttribute('value','media');
+                    option1.appendChild(texto1);
+
+                    const option2 = document.createElement('option');
+                    const texto2 = document.createTextNode('Total Poblacional');
+                    option2.setAttribute('value','total');
+                    option2.appendChild(texto2);
+
+                    const option3 = document.createElement('option');
+                    const texto3 = document.createTextNode('Proporcion Poblacional');
+                    option3.setAttribute('value','proporcion');
+                    option3.appendChild(texto3);
+
+                    select.appendChild(option1);
+                    select.appendChild(option2);
+                    select.appendChild(option3);
+
+                    select.setAttribute('class','form-select');
+                    select.setAttribute('name','categoria');
+                    select.setAttribute('id','categoria');
+
+                    const label = document.createElement('label');
+                    const textoLabel = document.createTextNode('Tipo');
+                    label.appendChild(textoLabel)
+                    label.setAttribute('class','input-group-text')
+
+                    calcular.appendChild(label)
+                    calcular.appendChild(select)
+                }
+            break;
+            case 'MAE': {
+                    let calcular = document.getElementById('calcular');
+
+                    let select = document.createElement('select');
+
+                    let option1 = document.createElement('option');
+                    let texto1 = document.createTextNode('Media Poblacional');
+                    option1.setAttribute('value','media');
+                    option1.appendChild(texto1);
+
+                    let option2 = document.createElement('option');
+                    let texto2 = document.createTextNode('Total Poblacional');
+                    option2.setAttribute('value','total');
+                    option2.appendChild(texto2);
+
+                    let option3 = document.createElement('option');
+                    let texto3 = document.createTextNode('Proporcion Poblacional');
+                    option3.setAttribute('value','proporcion');
+                    option3.appendChild(texto3);
+
+                    select.appendChild(option1);
+                    select.appendChild(option2);
+                    select.appendChild(option3);
+
+                    select.setAttribute('class','form-select');
+                    select.setAttribute('name','categoria');
+                    select.setAttribute('id','categoria');
+
+                    let label = document.createElement('label');
+                    let textoLabel = document.createTextNode('Tipo');
+                    label.appendChild(textoLabel)
+                    label.setAttribute('class','input-group-text')
+
+                    calcular.appendChild(label)
+                    calcular.appendChild(select)
+
+                const asignacion = document.getElementById('asignacion');
+
+                 select = document.createElement('select');
+
+                 option1 = document.createElement('option');
+                 texto1 = document.createTextNode('Proporcional');
+                option1.setAttribute('value','proporcional');
+                option1.appendChild(texto1);
+
+                 option2 = document.createElement('option');
+                 texto2 = document.createTextNode('Equitativa');
+                option2.setAttribute('value','equitativa');
+                option2.appendChild(texto2);
+
+                 option3 = document.createElement('option');
+                 texto3 = document.createTextNode('Optima');
+                option3.setAttribute('value','optima');
+                option3.appendChild(texto3);
+
+                select.appendChild(option1);
+                select.appendChild(option2);
+                select.appendChild(option3);
+
+                select.setAttribute('class','form-select');
+                select.setAttribute('name','asignacion');
+                select.setAttribute('id','asignaciones');
+
+                 label = document.createElement('label');
+                 textoLabel = document.createTextNode('Tipo');
+                label.appendChild(textoLabel)
+                label.setAttribute('class','input-group-text');
+
+                asignacion.appendChild(label)
+                asignacion.appendChild(select)
+                console.log(asignacion.value)
+
+                const asignaciones = document.getElementById('asignaciones')
+                const costo = document.getElementById('costo')
+                asignaciones.addEventListener('change', () => {
+                    
+                    while(costo.firstChild){
+                        costo.removeChild(costo.lastChild);
+                    }
+
+                    if(asignaciones.value==='optima'){
+
+                        let inputCosto = document.createElement('input');
+                        let titleCosto = document.createTextNode('costo');
+                        let labelCosto = document.createElement('label');
+                        labelCosto.appendChild(titleCosto)
+                        labelCosto.setAttribute('class','input-group-text');
+                        inputCosto.setAttribute('name','costo');
+
+                        costo.appendChild(labelCosto);
+                        costo.appendChild(inputCosto);
+                    }
+                    });
+            break;
+            }
+        }
+     }
+     }
+
+
+     // si el muestreo es MAE entonces necesitamos poner estratos
+    muestreo.addEventListener('change', () => {
+        const espacio = document.getElementById('calcular')
+        const numeroEstratos = document.getElementById('numeroEstratos')
+        
+
+        while(numeroEstratos.firstChild){
+            numeroEstratos.removeChild(numeroEstratos.lastChild);
+        }
+
+        while(espacio.firstChild){
+            espacio.removeChild(espacio.lastChild);
+        }
+
+        switch(muestreo.value){
+            case 'MAS': 
+                MASprocedimiento();
+            break;
+            case 'MAE': 
+            //agregar numero de estratos
+            MAEprocedimiento();
+            //procedimiento normal
+            MASprocedimiento();
+
+            break;
+        }
+
+    })
+
+    const MAEprocedimiento = function(){
+
+        //crear input para poner el numero de estratos
+        const numeroEstratos = document.getElementById('numeroEstratos');
+
+        const input = document.createElement('input');
+        input.setAttribute('id','inputEstratos');
+        input.setAttribute('name','numeroEstratos');
+        input.setAttribute('class', 'form-control');
+        input.setAttribute('required','true');
+        input.setAttribute('type', 'number')
+
+        const label = document.createElement('label');
+        label.setAttribute('class','form-label')
+        const title = document.createTextNode('Número de estratos:');
+        label.appendChild(title);
+        
+        numeroEstratos.appendChild(label);
+        numeroEstratos.appendChild(input);
+
+    }
+
+    const MASprocedimiento = function() {
+     tipo.addEventListener('change', () => {
+         functionForMAS();
+         console.log('cambio el tipo',tipo.value)
+    });
+    }
 
 
     //Ingresar Datos
@@ -147,7 +351,14 @@
             }
         },
         'MAE': {
-
+            'media': ['varianza_muestral', 'N', 'n','suma'],
+            'total': ['varianza_muestral', 'N', 'n', 'promedio'],
+            'proporcion': ['p','q','N','n','suma'],
+            'muestra': {
+                'media':['N','varianza_muestral'],
+                'total': ['N','varianza_muestral'],
+                'proporcion': ['N','p','q']
+            }
         }
     }
 
@@ -156,21 +367,39 @@
         const muestreo = document.getElementById('muestreo')
         const tipo = document.getElementById('tipo');
         const categoria = document.getElementById('categoria');
+        const asignacion = document.getElementById('asignacion');
+        const numerosEstratos = document.getElementById('inputEstratos') || 1;
         let datosNecesarios = []
+        const lugarcito = document.getElementById('datosArea');
 
         if(tipo.value!=='Elegir...'){
             const areaDatos = document.getElementById('datos');
             const tipo = document.getElementById('tipo');
 
             if(tipo.value!=='muestra'){
-                datosNecesarios = casos[muestreo][tipo.value]
+                datosNecesarios = casos[muestreo.value][tipo.value]
             }else{
-                datosNecesarios = casos[muestreo]['muestra'][categoria.value];
+                if(muestreo.value === 'MAE'){
+                    datosNecesarios = casos[muestreo.value]['muestra'][categoria.value];
+                    let divCota = document.createElement('div');
+                    let inputCota = document.createElement('input');
+                    inputCota.setAttribute('name','cotaMuestra')
+                    let titleCota = document.createTextNode('Cota');
+                    let labelCota = document.createElement('label');
+                    labelCota.appendChild(titleCota);
+                    divCota.appendChild(labelCota)
+                    divCota.appendChild(inputCota);
+                    lugarcito.appendChild(divCota)
+
+                }else{
+
+                    datosNecesarios = casos[muestreo.value]['muestra'][categoria.value];
+                }
             }
         }
 
         const areaDatos = document.getElementById('areaDatos');
-        const inputs = crearInputs(datosNecesarios);
+        const inputs = cualInput[muestreo.value](datosNecesarios,numerosEstratos.value)
 
         while(areaDatos.firstChild){
             areaDatos.removeChild(areaDatos.lastChild);
@@ -184,7 +413,7 @@
         inputs.forEach( input => areaDatos.appendChild(input))
 
 
-        const lugarcito = document.getElementById('datosArea');
+
 
         const crearBoton = document.createElement('button');
     
@@ -197,7 +426,7 @@
         lugarBoton.appendChild(crearBoton)
     }
 
-const crearInputs = function(array){
+const crearInputs = function(array){        
     let elementos = [];
     array.forEach( (elemento) => {
         let input = document.createElement('input');
@@ -220,6 +449,43 @@ const crearInputs = function(array){
     return elementos
 }
 
+const crearInputsEstratos = function(array,numeroestratos){        
+    let elementos = [];
+
+    for(let i=1; i<=numeroestratos; i++){
+        let divprincipal = document.createElement('div');
+        let title = document.createTextNode('Estrato ' + i);
+        let hr = document.createElement('hr');
+        divprincipal.appendChild(title);
+        array.forEach( (elemento) => {
+            let input = document.createElement('input');
+            let div = document.createElement('div');
+            let label = document.createElement('label');
+            let text = document.createTextNode(elemento)
+            label.appendChild(text)
+            label.setAttribute('class','form-label')
+            div.setAttribute('class','form-group mb-3')
+
+            input.setAttribute('name',elemento)
+            input.setAttribute('required','true')
+            input.setAttribute('class','form-control')
+            input.setAttribute('type','number')
+            input.setAttribute('step','any')
+            
+            div.appendChild(label);
+            div.appendChild(input)
+            div.appendChild(hr);
+            divprincipal.appendChild(div)
+        });
+        elementos.push(divprincipal)
+    }
+    return elementos
+}
+
+const cualInput = {
+    'MAS': crearInputs,
+    'MAE': crearInputsEstratos
+}
 
 
 
