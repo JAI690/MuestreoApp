@@ -123,10 +123,8 @@ router.post('/upload', (req,res)=>{
 
     const resultado = general(parametros);
 
-
-    resultadoFinal = {...resultado};
     const datos = Object.keys(resultado)
-    const resultados = [];
+    let resultados = [];
 
     for(let i=0; i<numeroEstratos; i++){
         let objeto = {}
@@ -135,6 +133,7 @@ router.post('/upload', (req,res)=>{
         });
         resultados.push(objeto)
     }
+
 
 
     const condicionesAgregados = {
@@ -181,7 +180,14 @@ router.post('/upload', (req,res)=>{
     let agregado = {}
     if(muestreo==='MAE'){
         if(tipo==='muestra'){
-
+            //vamos a sacar las n individuales
+            resultadoFinal['size'] = resultado.size;
+            resultados = resultado.wEstratos.map((estrato) => {
+                return({
+                    size: estrato*resultado.size,
+                    factor: estrato*100
+                })
+            });
         }else{
             let sumapromedios = sumarArray(resultado.estimacion)
             let sumavarianzas = sumarArray(resultado.varianza)
@@ -204,12 +210,7 @@ router.post('/upload', (req,res)=>{
             resultadoFinal = agregado;
         }
     }
-    //console.log(resultados);
-
-
-
-    console.log('agregado', agregado)
-    console.log(resultado)
+    console.log(resultadoFinal)
     const respuesta = {
         resultado:resultadoFinal,
         parametros,

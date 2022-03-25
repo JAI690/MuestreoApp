@@ -71,7 +71,7 @@
 
         <div class="card mb-6 p-1 mx-auto col-md-12">
             <div class="card-body">
-                <h2>resultado:</h2>
+                <h2>Resultado:</h2>
                 <table class="table table-hover">
                     {{#if resultado.estimacion}}
                         <tr>
@@ -103,10 +103,10 @@
                             <td>( {{resultado.minimo}} , {{resultado.maximo}} )</td>
                         </tr>
                     {{/if}}
-                    {{#if resultado.muestra}}
+                    {{#if resultado.size}}
                         <tr>
                             <th>Tamaño de la muestra:</th>
-                            <td>{{resultado.muestra}}</td>
+                            <td>{{resultado.size}}</td>
                         </tr>
                     {{/if}}    
                 </table> 
@@ -149,12 +149,18 @@
                             <td>( {{minimo}} , {{maximo}} )</td>
                         </tr>
                     {{/if}}
-                    {{#if muestra}}
+                    {{#if size}}
                         <tr>
                             <th>Tamaño de la muestra:</th>
-                            <td>{{muestra}}</td>
+                            <td>{{size}}</td>
                         </tr>
                     {{/if}}    
+                    {{#if factor}}
+                        <tr>
+                            <th>Factor:</th>
+                            <td>{{factor}}%</td>
+                        </tr>
+                    {{/if}}  
                 </table> 
                 <br>
                 {{/each}}
