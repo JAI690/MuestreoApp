@@ -48,42 +48,148 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
 
     //Leer archivo
     const contenido = archivo['file'][0].buffer.toString();
+    //console.log( archivo['file'][1].buffer.toString());
+    const contenidoDividido = contenido.split('\n');
+
+
 
     //Parsear archivo a un array
-    const records = parse(contenido, {
-        columns: false,
-        skip_empty_lines: true
-      });
-    const datos = records[0]
+    const records = contenidoDividido.map((estrato) => {
+        return estrato.split(',')
+    })
 
-    const {tipo} = req.body;
 
-    const varianza = calcularVarianza(datos);
-    const n = datos.length;
-    const suma = funcionSuma(datos);
-    const totalElementos = datos.length
-    const promedio = calcularPromedio(datos);
+
+    const datosRaw = records.map((estrato) => estrato.map(dato=> Number(dato)))
+    const datos = datosRaw;
+    const {tipo, muestreo, numeroEstratos} = req.body;
+
+
+    let varianza = [];
+    let n = [];
+    let suma = [];
+    let totalElementos = [];
+    let promedio = []
+
+
+    if(muestreo==='MAE'){
+        for(let i=0; i<datos.length; i++){
+            varianza.push(calcularVarianza(datos[i]))
+            n.push(datos[i].length);
+            suma.push(funcionSuma(datos[i]));
+            totalElementos.push(datos[i].length);
+            promedio.push(calcularPromedio(datos[i]));
+        }
+    }else{
+        varianza = calcularVarianza(datos);
+        n = datos.length;
+        suma = funcionSuma(datos);
+        totalElementos = datos.length
+        promedio = calcularPromedio(datos);
+    }
 
     const {N, p, q, cota} = req.body
 
     const parametros = {
+        muestreo: muestreo,
         type: tipo,
-        varianza: Number(varianza),
-        N: Number(N),
-        n: Number(n),
-        suma: Number(suma),
-        totalElementos: Number(totalElementos),
-        promedio: Number(promedio),
-        p: Number(p),
-        q: Number(q),
-        cota: Number(cota)
+        varianza: varianza,
+        N: N,
+        n: n,
+        suma: suma,
+        totalElementos: totalElementos,
+        promedio: promedio,
+        p: p,
+        q: q,
+        cota: cota,
+        estratos: numeroEstratos
     }
     const resultado = general(parametros);
-    console.log(resultado)
+    console.log(parametros);
+    console.log('resultado',resultado)
+
+    let resultados = [];
+    const datosT = Object.keys(resultado)
+    for(let i=0; i<numeroEstratos; i++){
+        let objeto = {}
+        datosT.forEach((dato) => {
+            objeto[dato] = resultado[dato][i]
+        });
+        resultados.push(objeto)
+    }
+
+    const condicionesAgregados = {
+        'media': {
+            'estimacion': (suma,N) => {
+                return suma/N;
+            },
+            'varianza': (suma,N) => {
+                return suma/(N*N);
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        },
+        'total': {
+            'estimacion': (suma) => {
+                return (suma);
+            },
+            'varianza': (suma) => {
+                return (suma);
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        },
+        'proporcion': {
+            'estimacion': (suma,N) => {
+                return (suma/N);
+            },
+            'varianza': (suma,N) => {
+                return (suma/(N*N));
+            },
+            'cota': (varianza) => {
+                return 2*Math.sqrt(varianza)
+            }
+        }
+    }
+
+    const sumarArray = (array)=>{
+        let initial = 0;
+        return array.reduce((prev,current)=>Number(prev)+Number(current),initial);
+    }
+
+    let resultadoFinal = {};
+
+    let agregado = {}
+    if(muestreo==='MAE'){
+            let sumapromedios = sumarArray(resultado.estimacion)
+            let sumavarianzas = sumarArray(resultado.varianza)
+            let sumaN = sumarArray(N);
+
+            const estimacionAgregada = condicionesAgregados[tipo]['estimacion'](sumapromedios,sumaN);
+            const varianzaAgregada = condicionesAgregados[tipo]['varianza'](sumavarianzas,sumaN);
+            const cotaAgregada = condicionesAgregados[tipo]['cota'](varianzaAgregada);
+            const margenAgregada = cotaAgregada/estimacionAgregada*100;
+            const minimoAgregada = estimacionAgregada-cotaAgregada;
+            const maximoAgregada = estimacionAgregada+cotaAgregada;
+
+            agregado['estimacion'] = estimacionAgregada;
+            agregado['varianza'] = varianzaAgregada;
+            agregado['cota'] = cotaAgregada;
+            agregado['margen'] = margenAgregada;
+            agregado['minimo'] = minimoAgregada;
+            agregado['maximo'] = maximoAgregada;
+
+            resultadoFinal = agregado;
+    }
+    console.log('resultadoFinal',resultadoFinal)
+    console.log('resultados', resultados)
 
     const respuesta = {
-        resultado,
-        parametros
+        resultado: resultadoFinal,
+        parametros,
+        resultados
     }
 
 

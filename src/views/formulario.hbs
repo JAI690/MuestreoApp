@@ -249,27 +249,7 @@
                 asignacion.appendChild(select)
                 console.log(asignacion.value)
 
-                const asignaciones = document.getElementById('asignaciones')
-                const costo = document.getElementById('costo')
-                asignaciones.addEventListener('change', () => {
-                    
-                    while(costo.firstChild){
-                        costo.removeChild(costo.lastChild);
-                    }
-
-                    if(asignaciones.value==='optima'){
-
-                        let inputCosto = document.createElement('input');
-                        let titleCosto = document.createTextNode('costo');
-                        let labelCosto = document.createElement('label');
-                        labelCosto.appendChild(titleCosto)
-                        labelCosto.setAttribute('class','input-group-text');
-                        inputCosto.setAttribute('name','costo');
-
-                        costo.appendChild(labelCosto);
-                        costo.appendChild(inputCosto);
-                    }
-                    });
+                
             break;
             }
         }
@@ -353,7 +333,7 @@
         'MAE': {
             'media': ['varianza_muestral', 'N', 'n','suma'],
             'total': ['varianza_muestral', 'N', 'n', 'promedio'],
-            'proporcion': ['p','q','N','n','suma'],
+            'proporcion': ['p','q','N','n'],
             'muestra': {
                 'media':['N','varianza_muestral'],
                 'total': ['N','varianza_muestral'],
@@ -368,6 +348,7 @@
         const tipo = document.getElementById('tipo');
         const categoria = document.getElementById('categoria');
         const asignacion = document.getElementById('asignacion');
+        const asignaciones = document.getElementById('asignaciones')
         const numerosEstratos = document.getElementById('inputEstratos') || 1;
         let datosNecesarios = []
         const lugarcito = document.getElementById('datosArea');
@@ -380,6 +361,7 @@
                 datosNecesarios = casos[muestreo.value][tipo.value]
             }else{
                 if(muestreo.value === 'MAE'){
+                    console.log(asignaciones.value)
                     datosNecesarios = casos[muestreo.value]['muestra'][categoria.value];
                     let divCota = document.createElement('div');
                     let inputCota = document.createElement('input');
@@ -390,6 +372,9 @@
                     divCota.appendChild(labelCota)
                     divCota.appendChild(inputCota);
                     lugarcito.appendChild(divCota)
+                    if(asignaciones.value==='optima'){
+                        datosNecesarios = [...datosNecesarios, 'costo']
+                    }
 
                 }else{
 

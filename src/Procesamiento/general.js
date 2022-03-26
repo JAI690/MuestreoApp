@@ -216,7 +216,7 @@ const casos = {
             case 'MAE':
                 switch (type){
                     default:
-                        respuesta['estimacion'] = promedios({muestreo,type, suma,promedio, n,N,estratos});
+                        respuesta['estimacion'] = promedios({muestreo,type, suma,promedio, n,N,estratos,p});
                         respuesta['varianza'] =  varianzaFormula({muestreo,type,varianza,N,n,p,q,estratos});
                         respuesta['cota'] =  cotaFormula({muestreo,type,varianza,N,n,p,q,estratos});
                         respuesta['margen'] = respuesta['cota'].map((cota, index) => cota/respuesta['estimacion'][index]*100)
@@ -226,6 +226,7 @@ const casos = {
                         break
                     case 'muestra':
                         const resultado =  size({asignacion, muestreo, type, categoria,cota:cotaMuestra,N,varianza, estratos, costo});
+                        console.log(resultado)
                         respuesta['size'] = resultado.size;
                         respuesta['wEstratos'] = resultado.wFactores;
                         break
@@ -300,22 +301,21 @@ const casos = {
         return varianzasCalculadas
     }
 
-    const promedios = function({muestreo, type, suma, n,N,promedio, estratos=1}){
+    const promedios = function({muestreo, type, suma, n,N,promedio, estratos=1,p}){
         const respuesta = [];
         let variante = [];
-        suma?variante=suma:variante=promedio;
-        console.log(variante)
+        suma?variante=suma:promedio?variante=promedio:variante=1;
 
         for(let i=0; i<estratos; i++){
             let sumaIndividual = variante[i];
             let nIndividual = n[i];
             let NIndividual = N[i];
             let promedioIndividual = variante[i];
-            console.log(sumaIndividual)
-            let respuestaIndividual = casos[muestreo][type]['promedio']({suma:sumaIndividual,n:nIndividual,N:NIndividual,promedio:promedioIndividual});
+            let pIndividual = p[i]
+            let respuestaIndividual = casos[muestreo][type]['promedio']({suma:sumaIndividual,n:nIndividual,N:NIndividual,promedio:promedioIndividual,p:pIndividual});
             respuesta.push(respuestaIndividual)
         }
-        console.log('promedio', respuesta)
+        console.log('promedios', respuesta)
         return respuesta;
     }
 
@@ -324,10 +324,11 @@ const casos = {
         let numeradores = [];
         let denominadores = [];
         let Nsuma = sumarArray(N);
-        costo!==0?costoRaiz = Math.sqrt(costo):costoRaiz=1;
-        let wFactor = N.map((Nindividual, index) => ((Nindividual*Math.sqrt(varianza[index]))/costoRaiz) )
-
-        const sumaW = sumarArray(wFactor)
+        let costosos = costo.map((costito,index) => {
+            costito!==0?costoRaiz = Math.sqrt(costito):costoRaiz=1;
+            return((N[index]*Math.sqrt(varianza[index]))/costoRaiz);
+        });
+        const sumaW = sumarArray(costosos)
 
         const wIndividuales = []
 
@@ -335,10 +336,12 @@ const casos = {
 
             let NIndividual = N[i];
             let varianzaIndividual = varianza[i];
+            let costoIndividual = costo[i]
 
-            let wIndividual = funcionW({asignacion,N:NIndividual,Ntotal:Nsuma,estratos,varianza:varianzaIndividual,costo,sumaWTotal:sumaW,sumaWTotalSinCosto:sumaW})
+            let wIndividual = funcionW({asignacion,N:NIndividual,Ntotal:Nsuma,estratos,varianza:varianzaIndividual,costo:costoIndividual,sumaWTotal:sumaW,sumaWTotalSinCosto:sumaW})
             let numerador = casos[muestreo][categoria]['Numerador']({N:NIndividual, varianza:varianzaIndividual, w:wIndividual});
             let denominador = casos[muestreo][categoria]['Denominador']({N:NIndividual,varianza:varianzaIndividual})
+            console.log('w',wIndividual)
             numeradores.push(numerador);
             denominadores.push(denominador);
             wIndividuales.push(wIndividual)
@@ -351,7 +354,7 @@ const casos = {
 
         respuesta['size'] = casos[muestreo][categoria]['sizeTotal']({cota, N:Nsuma, sumaNumerador, sumaDenominador })
         respuesta['wFactores'] = wIndividuales;
-        console.log(respuesta)
+
         return respuesta
     }
 

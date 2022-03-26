@@ -17,6 +17,15 @@
         <div class="card mb-4">
         <div class="col-md-12 mx-auto">
                 <div class="card-body">
+                    <!-- Muestreo -->
+                    <div class="input-group col-md-12 mb-3">
+                        <label for="validationCustom04" class="input-group-text" for="inputGroupSelect01">Tipo de muestreo</label>
+                        <select id="muestreo" class="form-select" id="inputGroupSelect01" name="muestreo">
+                            <option disabled selected>Elegir...</option>
+                            <option value="MAS">Muestreo Aleatorio Simple</option>
+                            <option value="MAE">Muestreo Aleatorio Estratificado</option>
+                        </select>
+                    </div> 
 
                     <!-- Tipo -->
                     <div class="input-group">
@@ -27,6 +36,16 @@
                             <option value="total">Total Poblacional</option>
                             <option value="proporcion">Proporcion Poblacional</option>
                         </select>
+                    </div>
+                        <!--- SOLO para el estratificado -->
+                    <div class="col-md-12 mx-auto">
+                        <div class="">
+                            <div class="card-body">
+                                <!-- Numero de estratos -->
+                                <div id="numeroEstratos" class="form-group">
+                                </div>
+                            </div>
+                        </div>
                     </div>                               
                 </div>
         </div>
@@ -88,6 +107,50 @@
  <script>
 
     const tipo = document.getElementById("tipo");
+     // si el muestreo es MAE entonces necesitamos poner estratos
+    muestreo.addEventListener('change', () => {
+        const espacio = document.getElementById('calcular')
+        const numeroEstratos = document.getElementById('numeroEstratos')
+        
+
+        while(numeroEstratos.firstChild){
+            numeroEstratos.removeChild(numeroEstratos.lastChild);
+        }
+
+        while(espacio.firstChild){
+            espacio.removeChild(espacio.lastChild);
+        }
+
+        if(muestreo.value==='MAE'){
+            //agregar numero de estratos
+            MAEprocedimiento();
+
+
+        }
+
+    })
+
+const MAEprocedimiento = function(){
+
+        //crear input para poner el numero de estratos
+        const numeroEstratos = document.getElementById('numeroEstratos');
+
+        const input = document.createElement('input');
+        input.setAttribute('id','inputEstratos');
+        input.setAttribute('name','numeroEstratos');
+        input.setAttribute('class', 'form-control');
+        input.setAttribute('required','true');
+        input.setAttribute('type', 'number')
+
+        const label = document.createElement('label');
+        label.setAttribute('class','form-label')
+        const title = document.createTextNode('Número de estratos:');
+        label.appendChild(title);
+        
+        numeroEstratos.appendChild(label);
+        numeroEstratos.appendChild(input);
+
+    }
 
 
     //Si selecciono algo diferente a la muestra debo elegir que quiero calcular
@@ -106,10 +169,13 @@
     const ingresarDatos = function(){
         const tipo = document.getElementById('tipo')
         
-        let datosNecesarios = casos[tipo.value]
+        let datosNecesarios = casos[tipo.value];
+        const numerosEstratos = document.getElementById('inputEstratos')|| 1;
 
         const areaDatos = document.getElementById('areaDatos');
-        const inputs = crearInputs(datosNecesarios);
+
+        const inputs = cualInput[muestreo.value](datosNecesarios,numerosEstratos.value);
+        console.log(inputs)
 
         while(areaDatos.firstChild){
             areaDatos.removeChild(areaDatos.lastChild);
@@ -160,6 +226,47 @@ const crearInputs = function(array){
 }
 
 
+
+const crearInputsEstratos = function(array,numeroestratos){        
+    let elementos = [];
+    console.log(array)
+    console.log(numeroestratos)
+
+    for(let i=1; i<=numeroestratos; i++){
+        let divprincipal = document.createElement('div');
+        let title = document.createTextNode('Estrato ' + i);
+        let hr = document.createElement('hr');
+        divprincipal.appendChild(title);
+        array.forEach( (elemento) => {
+            let input = document.createElement('input');
+            let div = document.createElement('div');
+            let label = document.createElement('label');
+            let text = document.createTextNode(elemento)
+            label.appendChild(text)
+            label.setAttribute('class','form-label')
+            div.setAttribute('class','form-group mb-3')
+
+            input.setAttribute('name',elemento)
+            input.setAttribute('required','true')
+            input.setAttribute('class','form-control')
+            input.setAttribute('type','number')
+            input.setAttribute('step','any')
+            
+            div.appendChild(label);
+            div.appendChild(input)
+            div.appendChild(hr);
+            divprincipal.appendChild(div)
+        });
+        elementos.push(divprincipal)
+    }
+    console.log('elementos',elementos)
+    return elementos
+}
+
+const cualInput = {
+    'MAS': crearInputs,
+    'MAE': crearInputsEstratos
+}
 
 
 //MEDIA
