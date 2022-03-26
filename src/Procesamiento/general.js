@@ -122,6 +122,8 @@ const casos = {
                 return (N*N)*((N-n)/N)*(varianza/n)
             },
             'promedio': ({promedio,N}) => {
+                console.log('prom',promedio);
+                console.log('N',N)
                 return (promedio*N)
             },
             'sizeTotal': ({cota,N,sumaNumerador,sumaDenominador}) => {
@@ -301,16 +303,16 @@ const casos = {
         return varianzasCalculadas
     }
 
-    const promedios = function({muestreo, type, suma, n,N,promedio, estratos=1,p=0}){
+    const promedios = function({muestreo, type, suma=[], n,N,promedio=[], estratos=1,p=0}){
         const respuesta = [];
         let variante = [];
         suma?variante=suma:promedio?variante=promedio:variante=1;
         
         for(let i=0; i<estratos; i++){
-            let sumaIndividual = variante[i];
+            let sumaIndividual = suma[i];
             let nIndividual = n[i];
-            let NIndividual = N[i];
-            let promedioIndividual = variante[i];
+            let NIndividual = Number(N[i]);
+            let promedioIndividual = promedio[i];
             let pIndividual = p[i]
             let respuestaIndividual = casos[muestreo][type]['promedio']({suma:sumaIndividual,n:nIndividual,N:NIndividual,promedio:promedioIndividual,p:pIndividual});
             respuesta.push(respuestaIndividual)
@@ -319,7 +321,7 @@ const casos = {
         return respuesta;
     }
 
-    const size = function({asignacion, muestreo, type, categoria,cota,N,p,q,varianza, estratos=1, costo}){
+    const size = function({asignacion, muestreo, type, categoria,cota,N,p,q,varianza, estratos=1, costo=[]}){
         let respuesta = [];
         let numeradores = [];
         let denominadores = [];

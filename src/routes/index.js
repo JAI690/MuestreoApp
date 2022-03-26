@@ -87,6 +87,8 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
         totalElementos = datos.length
         promedio = calcularPromedio(datos);
     }
+    console.log('calculo:',promedio)
+
 
     const {N, p, q, cota} = req.body
 
