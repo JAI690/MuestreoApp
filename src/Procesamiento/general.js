@@ -301,11 +301,11 @@ const casos = {
         return varianzasCalculadas
     }
 
-    const promedios = function({muestreo, type, suma, n,N,promedio, estratos=1,p}){
+    const promedios = function({muestreo, type, suma, n,N,promedio, estratos=1,p=0}){
         const respuesta = [];
         let variante = [];
         suma?variante=suma:promedio?variante=promedio:variante=1;
-
+        
         for(let i=0; i<estratos; i++){
             let sumaIndividual = variante[i];
             let nIndividual = n[i];
