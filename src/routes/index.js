@@ -64,7 +64,7 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
     const datos = datosRaw;
     const {tipo, muestreo, numeroEstratos} = req.body;
 
-
+    console.log(datos)
     let varianza = [];
     let n = [];
     let suma = [];
@@ -81,11 +81,11 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
             promedio.push(calcularPromedio(datos[i]));
         }
     }else{
-        varianza = calcularVarianza(datos);
-        n = datos.length;
-        suma = funcionSuma(datos);
-        totalElementos = datos.length
-        promedio = calcularPromedio(datos);
+        varianza = calcularVarianza(...datos);
+        n = datos[0].length;
+        suma = funcionSuma(...datos);
+        totalElementos = datos[0].length
+        promedio = calcularPromedio(...datos);
     }
     console.log('calculo:',promedio)
 
@@ -204,6 +204,8 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
             agregado['maximo'] = maximoAgregada;
 
             resultadoFinal = agregado;
+    }else{
+        resultadoFinal = resultado
     }
     console.log('resultadoFinal',resultadoFinal)
     console.log('resultados', resultados)

@@ -202,9 +202,9 @@ const casos = {
             case 'MAS': 
                 switch (type){
                     default:
-                        respuesta['estimacion'] = promedios({muestreo,type, suma,promedio, n,N});
-                        respuesta['varianza'] =  varianzaFormula({muestreo,type,varianza,N,n,p,q});
-                        respuesta['cota'] =  cotaFormula({muestreo,type,varianza,N,n,p,q});
+                        respuesta['estimacion'] = promediosMAS({muestreo,type, suma,promedio, n,N});
+                        respuesta['varianza'] =  varianzaFormulaMAS({muestreo,type,varianza,N,n,p,q});
+                        respuesta['cota'] =  cotaFormulaMAS({muestreo,type,varianza,N,n,p,q});
                         respuesta['margen'] = respuesta['cota']/respuesta['estimacion']*100
                         respuesta['minimo'] = respuesta['estimacion']-respuesta['cota']
                         respuesta['maximo'] = respuesta['estimacion']+respuesta['cota']
@@ -323,7 +323,10 @@ const casos = {
             }
             let nIndividual = n[i];
             let NIndividual = Number(N[i]);
-            let pIndividual = p[i]
+            let pIndividual= 0
+            if(p){
+                pIndividual = p[i]
+            }
             let respuestaIndividual = casos[muestreo][type]['promedio']({suma:sumaIndividual,n:nIndividual,N:NIndividual,promedio:promedioIndividual,p:pIndividual});
 
             respuesta.push(respuestaIndividual)
@@ -426,6 +429,30 @@ const casos = {
         
         return respuesta
     }
+
+    ///MAS
+    const varianzaFormulaMAS = function({type, varianza=0, N, n, p=0, q=0 }){
+        const respuesta = casos['MAS'][type]['varianza']({varianza,N,n,p,q});  
+        return respuesta
+    }
+
+    const cotaFormulaMAS =  function({type,varianza=0, N, n, p=0, q=0}){
+        const varianzaCalculada = casos['MAS'][type]['varianza']({varianza,N,n,p,q});  
+        console.log(varianzaCalculada)
+        return 2*Math.sqrt(varianzaCalculada)
+    }
+
+    const promediosMAS = function({type, suma, n,N,promedio}){
+        const respuesta = casos['MAS'][type]['promedio']({suma,n,N,promedio});
+
+        return respuesta;
+    }
+
+    const sizeMAS = function({categoria,cota,N,p,q,varianza}){
+        const respuesta = casos[categoria]['size']({cota,N,p,q,varianza})
+        return respuesta
+    }
+
 
 
 module.exports = {varianzaFormula,cotaFormula,promedios,funcionSuma,calcularPromedio,calcularVarianza,general,individualMAE}
