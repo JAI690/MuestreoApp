@@ -3,7 +3,7 @@ var multer = require('multer');
 var upload = multer();
 const { parse } = require('csv-parse/sync');
 const {mediaPoblacional} = require('../Procesamiento/Media poblacional/index')
-const {varianzaFormula,cota, promedios,funcionSuma,calcularPromedio,calcularVarianza, general} = require('../Procesamiento/general')
+const {varianzaFormula,cota, promedios,funcionSuma,calcularPromedio,calcularVarianza, general, individualMAE} = require('../Procesamiento/general')
 
 const router = express.Router();
 
@@ -107,8 +107,28 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
         estratos: numeroEstratos
     }
     const resultado = general(parametros);
-    console.log(parametros);
-    console.log('resultado',resultado)
+
+
+    const parametrosIndividuales = [];
+    for(let i=0; i<numeroEstratos; i++){
+        let parametro = {}
+        parametro['muestreo'] = 'MAS';
+        parametro['estratos'] = 1;
+        parametro['type'] = tipo;
+        varianza?parametro['varianza'] = [varianza[i]]:parametro['varianza'] =null;
+        parametro['N'] = [N[i]];
+        parametro['n'] = [n[i]];
+        suma?parametro['suma'] = [suma[i]]:parametro['suma'] = null;
+        parametro['totalElementos'] = [totalElementos[i]];
+        promedio?parametro['promedio'] = [promedio[i]]:parametro['promedio'] =null;
+        p?parametro['p'] = [p[i]]:parametro['p'] = null;
+        q?parametro['q'] = [q[i]]:parametro['q'] = null;
+        cota?parametro['cota'] = [cota[i]]:parametro['cota'] = null;
+        parametrosIndividuales.push(parametro)
+    }
+    const resultadosIndividuales = parametrosIndividuales.map((params)=>individualMAE(params));
+
+
 
     let resultados = [];
     const datosT = Object.keys(resultado)
@@ -191,7 +211,7 @@ router.post('/archivo',upload.fields([{name: 'file', maxCount: 1}]), (req,res) =
     const respuesta = {
         resultado: resultadoFinal,
         parametros,
-        resultados
+        resultados: resultadosIndividuales
     }
 
 
@@ -208,6 +228,7 @@ router.post('/upload', (req,res)=>{
 
     const {numeroEstratos, N, n, varianza_poblacional, varianza_muestral, suma, totalElementos, promedio, p, q, cota, cotaMuestra, costo} = req.body
 
+    const varianza = varianza_muestral||varianza_poblacional;
     const parametros = {
         asignacion: asignacion,
         muestreo: muestreo,
@@ -230,6 +251,28 @@ router.post('/upload', (req,res)=>{
     let resultadoFinal = {};
 
     const resultado = general(parametros);
+
+    const parametrosIndividuales = [];
+    let resultadosIndividuales = [];
+    if(tipo!=='muestra'){
+        for(let i=0; i<numeroEstratos; i++){
+            let parametro = {}
+            parametro['muestreo'] = 'MAS';
+            parametro['estratos'] = 1;
+            parametro['type'] = tipo;
+            varianza?parametro['varianza'] = [varianza[i]]:parametro['varianza'] =null;
+            parametro['N'] = [N[i]];
+            parametro['n'] = [n[i]];
+            suma?parametro['suma'] = [suma[i]]:parametro['suma'] = null;
+            promedio?parametro['promedio'] = [promedio[i]]:parametro['promedio'] =null;
+            p?parametro['p'] = [p[i]]:parametro['p'] = null;
+            q?parametro['q'] = [q[i]]:parametro['q'] = null;
+            cota?parametro['cota'] = [cota[i]]:parametro['cota'] = null;
+            parametrosIndividuales.push(parametro)
+        }
+        resultadosIndividuales = parametrosIndividuales.map((params)=>individualMAE(params));
+    }
+
 
     const datos = Object.keys(resultado)
     let resultados = [];
@@ -318,11 +361,12 @@ router.post('/upload', (req,res)=>{
             resultadoFinal = agregado;
         }
     }
+    resultadosIndividuales=resultados;
     console.log(resultadoFinal)
     const respuesta = {
         resultado:resultadoFinal,
         parametros,
-        resultados
+        resultados: resultadosIndividuales
     }
 
     res.render('../views/resultado.hbs', respuesta)

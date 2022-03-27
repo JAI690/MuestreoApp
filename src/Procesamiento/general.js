@@ -179,7 +179,7 @@ const casos = {
 
         switch (queCalcular){
             case 'promedio': 
-                respuesta = promedios({type, suma,promedio, totalElementos,N});
+                respuesta = promedios({type, suma,promedio, totalElementos,N,p,q});
                 break
             case 'varianza':
                 respuesta =  varianzaFormula({type,isKnown,varianza,N,n,p,q});
@@ -227,8 +227,9 @@ const casos = {
 
                         break
                     case 'muestra':
-                        const resultado =  size({asignacion, muestreo, type, categoria,cota:cotaMuestra,N,varianza, estratos, costo});
-                        console.log(resultado)
+                        console.log('N',N)
+                        const resultado =  size({asignacion, muestreo, type, categoria,cota:cotaMuestra,N,varianza, estratos, costo,p,q});
+
                         respuesta['size'] = resultado.size;
                         respuesta['wEstratos'] = resultado.wFactores;
                         break
@@ -307,14 +308,24 @@ const casos = {
         const respuesta = [];
         let variante = [];
         suma?variante=suma:promedio?variante=promedio:variante=1;
+
+
         
         for(let i=0; i<estratos; i++){
-            let sumaIndividual = suma[i];
+            let sumaIndividual = []
+            let promedioIndividual = []
+            if(type==='proporcion'){
+                sumaIndividual = p[i]*n[i]
+                promedioIndividual = p[i]*n[i]
+            }else{
+                sumaIndividual = suma[i];
+                promedioIndividual = promedio[i];
+            }
             let nIndividual = n[i];
             let NIndividual = Number(N[i]);
-            let promedioIndividual = promedio[i];
             let pIndividual = p[i]
             let respuestaIndividual = casos[muestreo][type]['promedio']({suma:sumaIndividual,n:nIndividual,N:NIndividual,promedio:promedioIndividual,p:pIndividual});
+
             respuesta.push(respuestaIndividual)
         }
         console.log('promedios', respuesta)
@@ -326,6 +337,11 @@ const casos = {
         let numeradores = [];
         let denominadores = [];
         let Nsuma = sumarArray(N);
+        console.log('p',p)
+        if(!varianza){
+            varianza = p.map((dato,index)=>dato*q[index])
+        }
+
         let costosos = costo.map((costito,index) => {
             costito!==0?costoRaiz = Math.sqrt(costito):costoRaiz=1;
             return((N[index]*Math.sqrt(varianza[index]))/costoRaiz);
@@ -398,5 +414,18 @@ const casos = {
         return funcionSuma(array)/array.length
     }
 
+    const individualMAE = function({muestreo, type,varianza, N, n, p, q,suma,categoria,promedio, cota, estratos, cotaMuestra, costo}){
+        let respuesta = {};
+        console.log('params',N,n,suma,promedio,p)
+        respuesta['estimacion'] = promedios({muestreo,type, suma,promedio, n,N,estratos,p,q});
+        respuesta['varianza'] =  varianzaFormula({muestreo,type,varianza,N,n,p,q,estratos});
+        respuesta['cota'] =  cotaFormula({muestreo,type,varianza,N,n,p,q,estratos});
+        respuesta['margen'] = respuesta['cota']/respuesta['estimacion']*100
+        respuesta['minimo'] = Number(respuesta['estimacion'])-Number(respuesta['cota']);
+        respuesta['maximo'] = Number(respuesta['estimacion'])+Number(respuesta['cota']);
+        
+        return respuesta
+    }
 
-module.exports = {varianzaFormula,cotaFormula,promedios,funcionSuma,calcularPromedio,calcularVarianza,general}
+
+module.exports = {varianzaFormula,cotaFormula,promedios,funcionSuma,calcularPromedio,calcularVarianza,general,individualMAE}
