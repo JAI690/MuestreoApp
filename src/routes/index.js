@@ -362,7 +362,10 @@ router.post('/upload', (req,res)=>{
 
             resultadoFinal = agregado;
         }
+    }else{
+        resultadoFinal = resultado
     }
+    
     resultadosIndividuales=resultados;
     console.log(resultadoFinal)
     const respuesta = {

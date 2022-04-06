@@ -69,7 +69,15 @@ const casos = {
                 return (suma/n)
             },
             'size': ({cota,N,varianza}) => {
-                const D = (cota*cota)/4;
+                cota = Number(cota);
+                N = Number(N);
+                varianza = Number(varianza)
+                const D = Number((cota*cota)/4);
+                console.log(D);
+                console.log(varianza)
+                console.log(cota)
+                console.log(N)
+                console.log(N*varianza)/(((N-1)*D) + varianza);
                     return (N*varianza)/(((N-1)*D) + varianza)
             }
         },
@@ -211,7 +219,7 @@ const casos = {
 
                         break
                     case 'muestra':
-                        respuesta['muestra'] =  size({muestreo,categoria,cota,N,p,q,varianza});
+                        respuesta['muestra'] =  sizeMAS({muestreo,categoria,cota,N,p,q,varianza});
                         break
                 }
                 break;
@@ -335,6 +343,7 @@ const casos = {
         return respuesta;
     }
 
+
     const size = function({asignacion, muestreo, type, categoria,cota,N,p,q,varianza, estratos=1, costo=[]}){
         let respuesta = [];
         let numeradores = [];
@@ -449,9 +458,11 @@ const casos = {
     }
 
     const sizeMAS = function({categoria,cota,N,p,q,varianza}){
-        const respuesta = casos[categoria]['size']({cota,N,p,q,varianza})
+        const respuesta = casos['MAS'][categoria]['size']({cota,N,p,q,varianza})
         return respuesta
     }
+
+    
 
 
 

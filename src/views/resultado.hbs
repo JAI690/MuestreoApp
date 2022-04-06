@@ -109,6 +109,12 @@
                             <td>{{resultado.size}}</td>
                         </tr>
                     {{/if}}    
+                    {{#if resultado.muestra}}
+                        <tr>
+                            <th>Tamaño de la muestra:</th>
+                            <td>{{resultado.muestra}}</td>
+                        </tr>
+                    {{/if}}   
                 </table> 
                 <br>
             </div>
@@ -153,6 +159,12 @@
                         <tr>
                             <th>Tamaño de la muestra:</th>
                             <td>{{size}}</td>
+                        </tr>
+                    {{/if}}    
+                    {{#if muestra}}
+                        <tr>
+                            <th>Tamaño de la muestra:</th>
+                            <td>{{muestra}}</td>
                         </tr>
                     {{/if}}    
                     {{#if factor}}
